@@ -10,8 +10,8 @@ import remarkBreaks from "remark-breaks";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
-import "@/app/(private)/chat/chat.css";
-import { Bot} from "lucide-react";
+import "./chat.css";
+import { Bot, BrainCog } from "lucide-react";
 
 
 interface Message {
@@ -21,7 +21,7 @@ interface Message {
 }
 
 
-export default function Chat() {
+export default function ChatComponent() {
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -162,10 +162,10 @@ export default function Chat() {
 
                           <div className="flex flex-col gap-1">
                             <div className='flex items-center gap-1'>
-                                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                                    <Bot className="w-4 h-4" />
-                                    <span>CoE Assistant</span>
-                                  </div>
+                              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                                <Bot className="w-4 h-4" />
+                                <span>CoE Assistant</span>
+                              </div>
 
                               {msg.elapsedTime && (
                                   <div className="text-xs text-muted-foreground mb-1">
@@ -173,15 +173,14 @@ export default function Chat() {
                                   </div>
                               )}
                             </div>
-
-
-
                             <ReactMarkdown
-                                remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]}
-                                rehypePlugins={[rehypeKatex, rehypeRaw]}
+
                             >
                               {msg.text}
-                            </ReactMarkdown>
+                            </ReactMarkdown>;
+
+
+
                           </div>
                       )}
 
