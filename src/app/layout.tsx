@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthProvider } from "./Providers";
 import "./globals.css";
 import React, { ReactNode } from "react";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -71,11 +72,13 @@ export default function Layout({ children }: LayoutProps) {
         <title>ChatCane</title>
       </head>
       <body className="h-screen overflow-y-auto w-full z-0">
+        <AuthProvider>
         <ThemeProvider>
           {/* <UserContextProvider> */}
           {children}
           {/* </UserContextProvider> */}
         </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

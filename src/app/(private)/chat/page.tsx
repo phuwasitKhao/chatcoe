@@ -12,7 +12,8 @@ import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
 import "@/app/(private)/chat/chat.css";
 import { Bot} from "lucide-react";
-
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Message {
   text: string;
@@ -22,6 +23,25 @@ interface Message {
 
 
 export default function Chat() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") {
+      // ข้อมูล session กำลังโหลด
+      return;
+    }
+    if (status === "unauthenticated") {
+      // ผู้ใช้ยังไม่ได้เข้าสู่ระบบ
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    // แสดงข้อความระหว่างที่ข้อมูล session กำลังโหลด
+    return <div>Loading...</div>;
+  }
+
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 

@@ -46,6 +46,7 @@ export default function PageWithMainControlLayout({
     { url: "/history", label: "ประวัติแชท", icon: <CalendarRange className="h-4 w-4" /> },
     // {url: "/", label: "ส่งผล", icon: <CirclePlus className="h-4 w-4"/>},
     { url: "/about", label: "About", icon: <User className="h-4 w-4" /> },
+    
   ];
 
   return (
