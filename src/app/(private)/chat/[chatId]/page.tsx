@@ -205,7 +205,7 @@ export default function Chat() {
         let idx = 0;
         const start = Date.now();
         setIsGenerating(true);
-
+    
         typingIntervalRef.current = setInterval(() => {
             if (idx <= response.length) {
                 setMessages((prev) => {
@@ -220,10 +220,10 @@ export default function Chat() {
             } else {
                 clearInterval(typingIntervalRef.current!);
                 typingIntervalRef.current = null;
-
+    
                 const end = Date.now();
                 const duration = (end - start) / 1000;
-
+    
                 setMessages((prev) => {
                     const updated = [...prev];
                     const last = updated[updated.length - 1];
@@ -233,11 +233,13 @@ export default function Chat() {
                     };
                     return updated;
                 });
-
+    
                 setIsGenerating(false);
+                setInputLocked(false); // ✅ ปลดล็อกตรงนี้ เมื่อ bot พิมพ์จบ
             }
         }, 30);
     };
+    
 
     const sendMessage = async () => {
         const userInput = inputRef.current?.value.trim();
@@ -376,7 +378,7 @@ export default function Chat() {
             ]);
             setIsGenerating(false);
         } finally {
-            setInputLocked(false);
+            
         }
     };
 
@@ -386,7 +388,9 @@ export default function Chat() {
             console.log("Enter pressed, sending message");
             sendMessage();
         }
+        console.log(inputLocked ? "Input is locked" : "Input is not locked");
     }
+    
 
     if (status === "loading") {
         return <div className="flex justify-center items-center h-screen">กำลังโหลด...</div>;
@@ -395,7 +399,6 @@ export default function Chat() {
     if (isLoading && messages.length === 0) {
         return <div className="flex justify-center items-center h-screen">กำลังโหลดข้อมูล...</div>;
     }
-
     return (
         <div className="w-full h-screen flex flex-col">
             <div className="p-4 flex justify-between items-center">
