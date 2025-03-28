@@ -3,6 +3,8 @@ import React from 'react'
 import Link from 'next/link';
 import { usePathname } from "next/navigation";
 import { NavItemModel } from "@/components/share/layout/nav-items.model";
+import { signOut } from 'next-auth/react'
+
 
 export default function Navbar(
     {navItems}: { navItems?: NavItemModel[] }) {
@@ -24,6 +26,14 @@ export default function Navbar(
                         </Link>
                     </li>
                 ))}
+                <li>
+                <button 
+                  onClick={() => signOut()} 
+                  className='bg-gray-800 text-white hover:bg-black px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out'
+                >
+                  Logout
+                </button>
+                </li>
             </ul>
         </nav>
     );

@@ -1,13 +1,15 @@
 "use client";
 
-
-import React from 'react'
+import React, {useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import kandit from "@public/images/kandit.jpg";
 import apiwat from "@public/images/apiwat.jpg"
+
 
 const teamMembers = [
     {
@@ -66,8 +68,20 @@ const teamMembers = [
 ];
 
 
-
 const AboutPage = () => {
+    const { status } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (status === "loading") return;
+            if (status === "unauthenticated") {
+                router.push("/login");
+            }
+    }, [status, router]);
+    
+    if (status === "loading") {
+        return <div>Loading...</div>;
+      }
     return (
         <div className="min-h-screen py-12 px-6 bg-background text-foreground">
             <h1 className="text-3xl font-bold text-center mb-12">👨‍💻 Our Team</h1>

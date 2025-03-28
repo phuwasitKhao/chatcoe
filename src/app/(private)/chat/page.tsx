@@ -10,9 +10,11 @@ import remarkBreaks from "remark-breaks";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
-import "./chat.css";
-import { Bot, BrainCog } from "lucide-react";
-
+import "@/app/(private)/chat/chat.css";
+import { Bot} from "lucide-react";
+// import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Message {
   text: string;
@@ -21,10 +23,13 @@ interface Message {
 }
 
 
-export default function ChatComponent() {
+export default function Chat() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // ✅ ย้ายขึ้นมาบนสุดก่อนเงื่อนไขใดๆ
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputLocked, setInputLocked] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -33,10 +38,23 @@ export default function ChatComponent() {
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  
+
+  useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
   }, [messages]);
+  
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   const typeBotResponse = (response: string) => {
     let idx = 0;
