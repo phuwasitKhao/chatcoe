@@ -10,9 +10,13 @@ import Signin from "@public/Login.svg";
 import logo from "@public/chatcoe.svg";
 import Image from "next/image";
 import { FaHome } from "react-icons/fa";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, Terminal } from "lucide-react";
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const router = useRouter();
   const { status } = useSession();
@@ -25,12 +29,24 @@ function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await signIn("credentials", {
+
+    // เรียก signIn แบบไม่ redirect ทันที
+    const result = await signIn("credentials", {
       email,
       password,
-      redirect: true,
-      callbackUrl: "/chat",
+      redirect: false, // <--- สำคัญ
     });
+
+    if (result?.error) {
+      setError("อีเมลหรือพาสเวิร์ดไม่ถูกต้อง");
+      setSuccess(""); // เคลียร์ success
+    } else {
+      setError("");
+      setSuccess("ล็อกอินสำเร็จ!");
+
+      // จากนั้นถ้าสำเร็จแล้ว ค่อย redirect ด้วยตัวเอง
+      router.push("/chat");
+    }
   };
 
   if (status === "loading") {
@@ -108,6 +124,28 @@ function LoginPage() {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Fixed Alert Container in the Bottom Right */}
+      <div className="fixed bottom-4 right-4 space-y-4 z-50">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <div>
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </div>
+          </Alert>
+        )}
+        {success && (
+          <Alert>
+            <Terminal className="h-4 w-4" />
+            <div>
+              <AlertTitle>Success!</AlertTitle>
+              <AlertDescription>{success}</AlertDescription>
+            </div>
+          </Alert>
+        )}
       </div>
     </div>
   );
