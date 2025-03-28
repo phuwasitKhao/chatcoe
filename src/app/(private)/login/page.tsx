@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client"
 
 import React, { useState, useEffect } from 'react'
@@ -90,3 +91,16 @@ function LoginPage() {
 
 export default LoginPage;
 
+=======
+import React from 'react';
+
+const Login = () => {
+    return (
+        <div>
+            hello
+        </div>
+    );
+};
+
+export default Login;
+>>>>>>> master
