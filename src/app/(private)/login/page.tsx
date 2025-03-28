@@ -9,7 +9,6 @@ import { useSession } from "next-auth/react";
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Removed unused error state
 
   const router = useRouter();
   const { status } = useSession();
@@ -18,7 +17,7 @@ function LoginPage() {
   useEffect(() => {
     console.log("Session status:", status);
     if (status === "authenticated") {
-      router.push("/chat/new"); // เปลี่ยนจาก /chat เป็น /chat/new
+      router.push("/chat/new");
     }
   }, [status, router]);
 
@@ -35,7 +34,7 @@ function LoginPage() {
     await signIn("credentials", {
       email,
       password,
-      redirect: true, // ✅ ให้ next-auth redirect เอง
+      redirect: true,
       callbackUrl: "/chat",
     });
   };
@@ -48,7 +47,6 @@ function LoginPage() {
     }
   };
 
-  // แสดงข้อความระหว่างที่ข้อมูล session กำลังโหลด
   if (status === "loading") {
     return <div>Loading...</div>;
   }
@@ -72,7 +70,6 @@ function LoginPage() {
               className="w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2"
               placeholder="Enter your password"
             />
-            {/* Removed unused error display */}
             <button
               type="submit"
               className="bg-green-500 text-white border py-2 px-3 rounded text-lg my-2"
