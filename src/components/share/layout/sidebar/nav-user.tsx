@@ -1,5 +1,5 @@
 "use client"
-
+import { signOut } from 'next-auth/react'
 import {
     BadgeCheck,
     Bell,
@@ -70,7 +70,6 @@ export function NavUser({user,}: { user: {
     // const { logout } = useUser();
 
     // if (!users) return null // Hide if no user data
-
     return (
         <SidebarMenu >
             <SidebarMenuItem>
@@ -132,10 +131,18 @@ export function NavUser({user,}: { user: {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem >
-                            <LogOut   className="cursor-pointer"/>
-                            Log out
-                        </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => signOut({
+                                    callbackUrl: '/',
+                                }).then(() => {
+                                 // แถม clear storage เพิ่ม
+                                    localStorage.clear();
+                                    sessionStorage.clear();
+                                })}
+                            >
+                                <LogOut />
+                                <span>Logout</span>
+                            </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

@@ -27,25 +27,9 @@ export default function Chat() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "loading") {
-      // ข้อมูล session กำลังโหลด
-      return;
-    }
-    if (status === "unauthenticated") {
-      // ผู้ใช้ยังไม่ได้เข้าสู่ระบบ
-      router.push("/login");
-    }
-  }, [status, router]);
-
-  if (status === "loading") {
-    // แสดงข้อความระหว่างที่ข้อมูล session กำลังโหลด
-    return <div>Loading...</div>;
-  }
-
+  // ✅ ย้ายขึ้นมาบนสุดก่อนเงื่อนไขใดๆ
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputLocked, setInputLocked] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -54,10 +38,23 @@ export default function Chat() {
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  
+
+  useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
   }, [messages]);
+  
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   const typeBotResponse = (response: string) => {
     let idx = 0;

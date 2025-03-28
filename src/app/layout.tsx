@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "./Providers";
 import "./globals.css";
 import React, { ReactNode } from "react";
@@ -69,16 +70,16 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <head>
-        <title>ChatCane</title>
+        <title>ChatCOE</title>
       </head>
       <body className="h-screen overflow-y-auto w-full z-0">
-        <AuthProvider>
-        <ThemeProvider>
-          {/* <UserContextProvider> */}
-          {children}
-          {/* </UserContextProvider> */}
-        </ThemeProvider>
-        </AuthProvider>
+      <SessionProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              {children}
+            </ThemeProvider>
+          </AuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );

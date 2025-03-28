@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client"
 
 import React, { useState, useEffect } from 'react'
@@ -10,38 +9,28 @@ import { useSession } from 'next-auth/react';
 function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    // Removed unused error state
 
     const router = useRouter();
     const { status } = useSession();
 
     useEffect(() => {
-        if (status === 'authenticated') {
-            // หากผู้ใช้เข้าสู่ระบบแล้ว เปลี่ยนเส้นทางไปยังหน้า /chat
-            router.push('/chat');
+        console.log("Session status:", status);
+        if (status === "authenticated") {
+          router.push("/chat");
         }
-    }, [status, router]);
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      }, [status, router]);
+      
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        try {
-            const res = await signIn("credentials", {
-                email, password, redirect: false, callbackUrl: '/chat'
-            });
-
-            if (!res || res.error) {
-                setError("Invalid credentials");
-                return;
-            }
-
-            // หากเข้าสู่ระบบสำเร็จ เปลี่ยนเส้นทางไปยังหน้า /chat
-            router.push('/chat');
-
-        } catch (error) {
-            console.log(error);
-        }
-    };
+      
+        await signIn("credentials", {
+          email,
+          password,
+          redirect: true, // ✅ ให้ next-auth redirect เอง
+          callbackUrl: "/chat", 
+        });
+      };
 
     const handleGoogleSignIn = async () => {
         try {
@@ -67,7 +56,7 @@ function LoginPage() {
                         <form onSubmit={handleSubmit}>
                             <input type="text" onChange={(e) => setEmail(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your email' />
                             <input type="password" onChange={(e) => setPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your password' />
-                            {error && <p className="text-red-500 text-sm my-2">{error}</p>}
+                            {/* Removed unused error display */}
                             <button type='submit' className='bg-green-500 text-white border py-2 px-3 rounded text-lg my-2'>Sign In</button>
                         </form>
                         <hr className='my-3' />
@@ -91,16 +80,3 @@ function LoginPage() {
 
 export default LoginPage;
 
-=======
-import React from 'react';
-
-const Login = () => {
-    return (
-        <div>
-            hello
-        </div>
-    );
-};
-
-export default Login;
->>>>>>> master
