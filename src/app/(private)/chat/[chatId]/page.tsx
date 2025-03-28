@@ -234,6 +234,7 @@ export default function Chat() {
         });
 
         setIsGenerating(false);
+        setInputLocked(false); // ✅ ปลดล็อกตรงนี้ เมื่อ bot พิมพ์จบ
       }
     }, 30);
   };
@@ -375,7 +376,6 @@ export default function Chat() {
       ]);
       setIsGenerating(false);
     } finally {
-      setInputLocked(false);
     }
   };
 
@@ -385,6 +385,7 @@ export default function Chat() {
       console.log("Enter pressed, sending message");
       sendMessage();
     }
+    console.log(inputLocked ? "Input is locked" : "Input is not locked");
   };
 
   if (status === "loading") {
@@ -402,7 +403,6 @@ export default function Chat() {
       </div>
     );
   }
-
   return (
     <div className="w-full h-screen flex flex-col">
       <div className="p-4 flex justify-between items-center">
