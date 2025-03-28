@@ -1,111 +1,165 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation'
-
+import React, { useState } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, Terminal } from "lucide-react";
+import { IoIosArrowBack } from "react-icons/io";
 function RegisterPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
+  const { data: session } = useSession();
+  if (session) redirect("/welcome");
 
-    const { data: session } = useSession();
-    if (session) redirect('/welcome');
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if (password != confirmPassword) {
-            setError("Password do not match!");
-            return;
-        }
-
-        if (!name || !email || !password || !confirmPassword) {
-            setError("Please complete all inputs.");
-            return;
-        }
-
-        const resCheckUser = await fetch("http://localhost:3000/api/usercheck", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email })
-        })
-
-        const { user } = await resCheckUser.json();
-
-        if (user) {
-            setError("User already exists.");
-            return;
-        }
-
-        try {
-            const res = await fetch("http://localhost:3000/api/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name, email, password
-                })
-            })
-
-            if (res.ok) {
-                const form = e.target as HTMLFormElement;
-                setError("");
-                setSuccess("User registration successfully!");
-                form.reset();
-            } else {
-                console.log("User registration failed.")
-            }
-
-        } catch (error) {
-            console.log("Error during registration: ", error)
-        }
+    if (password !== confirmPassword) {
+      setError("Password do not match!");
+      return;
     }
 
-    return (
-        <div className='flex-grow'>
-            <div className="flex justify-center items-center h-screen">
-                <div className='w-[400px] shadow-xl p-10 mt-5 rounded-xl'>
-                    <h3 className='text-3xl'>Register Page</h3>
-                    <hr className='my-3' />
-                    <form onSubmit={handleSubmit}>
+    if (!name || !email || !password || !confirmPassword) {
+      setError("Please complete all inputs.");
+      return;
+    }
 
-                        {error && (
-                            <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                                {error}
-                            </div>
-                        )}
+    const resCheckUser = await fetch("http://localhost:3000/api/usercheck", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
 
-                        {success && (
-                            <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                                {success}
-                            </div>
-                        )}
+    const { user } = await resCheckUser.json();
 
-                        <input type="text" onChange={(e) => setName(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your name' />
-                        <input type="text" onChange={(e) => setEmail(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your email' />
-                        <input type="password" onChange={(e) => setPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your password' />
-                        <input type="password" onChange={(e) => setConfirmPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Confirm your password' />
-                        <button type='submit' className='bg-green-500 text-white border py-2 px-3 rounded text-lg my-2'>Sign Up</button>
-                    </form>
-                    <hr className='my-3' />
-                    <div className='flex justify-between items-center'>
-                        <p>Go back to <Link href="/" className='text-red-400 hover:underline'>Homepage</Link></p>
-                        <p>Go to <Link href="/login" className='text-blue-500 hover:underline'>Login</Link> Page</p>
-                    </div>
+    if (user) {
+      setError("User already exists.");
+      return;
+    }
 
-                </div>
+    try {
+      const res = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      if (res.ok) {
+        const form = e.target as HTMLFormElement;
+        setError("");
+        setSuccess("User registration successfully!");
+        form.reset();
+      } else {
+        console.log("User registration failed.");
+      }
+    } catch (error) {
+      console.log("Error during registration: ", error);
+    }
+  };
+
+  return (
+    <div className="flex h-screen">
+      <div className="w-full flex items-center justify-center">
+        <div className="max-w-sm w-full px-8 py-10">
+          <div className="text-4xl font-bold mb-6 flex items-center">
+            Register
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-gray-700">Username</label>
+              <input
+                type="text"
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
+                placeholder="Enter your name"
+              />
+              <label className="block text-gray-700">Email</label>
+              <input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
+                placeholder="Enter your email"
+              />
+              <label className="block text-gray-700">Password</label>
+              <input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
+                placeholder="Enter your password"
+              />
+              <label className="block text-gray-700">Confirm Password</label>
+              <input
+                type="password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
+                placeholder="Confirm your password"
+              />
             </div>
+            <button
+              type="submit"
+              className="w-full bg-[#5A0157] hover:bg-[#442943] text-white py-2 px-4 rounded transition-all duration-300"
+            >
+              Register
+            </button>
+          </form>
+
+          <div className="flex items-center justify-between mt-4">
+            <Link
+              href="/login"
+              className="text-2xl text-[#1D1A43] hover:underline "
+            >
+              <IoIosArrowBack />
+            </Link>
+            <Link
+              className="text-sm text-[#1D1A43] hover:underline"
+              href="/login"
+            >
+              Back to login
+            </Link>
+          </div>
         </div>
-    )
+      </div>
+
+      {/* Fixed Alert Container in the Bottom Right */}
+      <div className="fixed bottom-4 right-4 space-y-4 z-50">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <div>
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </div>
+          </Alert>
+        )}
+        {success && (
+          <Alert>
+            <Terminal className="h-4 w-4" />
+            <div>
+              <AlertTitle>Success!</AlertTitle>
+              <AlertDescription>{success}</AlertDescription>
+            </div>
+          </Alert>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;
