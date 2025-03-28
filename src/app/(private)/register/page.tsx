@@ -40,7 +40,7 @@ function RegisterPage() {
 
         const { user } = await resCheckUser.json();
 
-        if (user) { 
+        if (user) {
             setError("User already exists.");
             return;
         }
@@ -65,43 +65,47 @@ function RegisterPage() {
                 console.log("User registration failed.")
             }
 
-        } catch(error) {
+        } catch (error) {
             console.log("Error during registration: ", error)
         }
     }
 
-  return (
-            <div className='flex-grow'>
-                <div className="flex justify-center items-center">
-                    <div className='w-[400px] shadow-xl p-10 mt-5 rounded-xl'>
-                        <h3 className='text-3xl'>Register Page</h3>
-                        <hr className='my-3' />
-                        <form onSubmit={handleSubmit}>
+    return (
+        <div className='flex-grow'>
+            <div className="flex justify-center items-center h-screen">
+                <div className='w-[400px] shadow-xl p-10 mt-5 rounded-xl'>
+                    <h3 className='text-3xl'>Register Page</h3>
+                    <hr className='my-3' />
+                    <form onSubmit={handleSubmit}>
 
-                            {error && (
-                                <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                                    {error}
-                                </div>
-                            )}
+                        {error && (
+                            <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
+                                {error}
+                            </div>
+                        )}
 
-                            {success && (
-                                <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                                    {success}
-                                </div>
-                            )}
+                        {success && (
+                            <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
+                                {success}
+                            </div>
+                        )}
 
-                            <input type="text" onChange={(e) => setName(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your name' />
-                            <input type="text" onChange={(e) => setEmail(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your email' />
-                            <input type="password" onChange={(e) => setPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your password' />
-                            <input type="password" onChange={(e) => setConfirmPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Confirm your password' />
-                            <button type='submit' className='bg-green-500 text-white border py-2 px-3 rounded text-lg my-2'>Sign Up</button>
-                        </form>
-                        <hr className='my-3' />
+                        <input type="text" onChange={(e) => setName(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your name' />
+                        <input type="text" onChange={(e) => setEmail(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your email' />
+                        <input type="password" onChange={(e) => setPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Enter your password' />
+                        <input type="password" onChange={(e) => setConfirmPassword(e.target.value)} className='w-full bg-gray-200 border py-2 px-3 rounded text-lg my-2' placeholder='Confirm your password' />
+                        <button type='submit' className='bg-green-500 text-white border py-2 px-3 rounded text-lg my-2'>Sign Up</button>
+                    </form>
+                    <hr className='my-3' />
+                    <div className='flex justify-between items-center'>
+                        <p>Go back to <Link href="/" className='text-red-400 hover:underline'>Homepage</Link></p>
                         <p>Go to <Link href="/login" className='text-blue-500 hover:underline'>Login</Link> Page</p>
                     </div>
+
                 </div>
             </div>
-  )
+        </div>
+    )
 }
 
 export default RegisterPage

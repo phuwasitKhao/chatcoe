@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import {
     AudioWaveform,
     BookOpen,
@@ -26,7 +26,8 @@ import {
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
-
+import { useUserData } from "@/hooks/useUserdata";
+import { useSession } from "next-auth/react";
 import {
     Sidebar,
     SidebarContent, SidebarFooter, SidebarGroupLabel,
@@ -37,7 +38,7 @@ import {
 } from "@/components/ui/sidebar";
 // import { useUser } from "@/app/userState";
 
-// This is sample data.
+
 const data = {
     user: {
         name: "shadcn",
@@ -70,7 +71,7 @@ const data = {
             items: [
                 {
                     title: "History",
-                    url: "#",
+                    url: "/chat/history",
                 },
                 {
                     title: "Starred",
@@ -168,13 +169,48 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const { data: session, status } = useSession();
+    const { userData, loading } = useUserData();
+    const [chatHistory, setChatHistory] = useState<any[]>([]);
 
-    // const { user  } = useUser();
+    useEffect(() => {
+        const fetchChatHistory = async () => {
+            if (session?.user?.id) { 
+                try {
+                    const response = await fetch(`/api/v1/chat/stream?userId=${session.user.id}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setChatHistory(data.chats || []);
+                    }
+                } catch (error) {
+                    console.error("Error loading chat history:", error);
+                }
+            }
+        };
+
+        if (status === "authenticated") {
+            fetchChatHistory();
+        }
+    }, [session, status]);  
+
 
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <NavUser user={{ name: 'Nawamin Onkhwan', email: 'nawamin.o@kkumail.com', avatar: "/avatars/shadcn.jpg" }} />
+                {/* <NavUser user={{ name: 'Nawamin Onkhwan', email: 'nawamin.o@kkumail.com', avatar: "/avatars/shadcn.jpg" }} /> */}
+                <NavUser
+                    user={
+                        userData
+                            ? {
+                                name: userData.name,
+                                email: userData.email,
+                                avatar: userData.avatar || '/avatars/default.jpg'
+                            }
+                            : loading
+                                ? { name: 'กำลังโหลด...', email: '', avatar: '' }
+                                : { name: 'ยังไม่ได้เข้าสู่ระบบ', email: '', avatar: '/avatars/default.jpg' }
+                    }
+                />
                 <Select>
                     <SidebarGroupLabel>Model</SidebarGroupLabel>
                     <SelectTrigger className="w-full">

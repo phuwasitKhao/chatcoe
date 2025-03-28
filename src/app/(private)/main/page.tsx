@@ -13,7 +13,7 @@ const MainPage = () => {
     };
 
     const handleSignup = () => {
-        router.push("/signup");
+        router.push("/register");
     };
 
     return (
