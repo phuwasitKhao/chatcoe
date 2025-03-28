@@ -11,10 +11,15 @@ import logo from "@public/chatcoe.svg";
 import Image from "next/image";
 import { FaHome } from "react-icons/fa";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Terminal } from "lucide-react";
+import { AlertCircle, Terminal, Eye, EyeOff } from "lucide-react";
+
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // สำหรับสลับการแสดง/ซ่อนรหัสผ่าน
+  const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -30,21 +35,30 @@ function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // เรียก signIn แบบไม่ redirect ทันที
+    // เริ่มต้นทุกครั้งเคลียร์ error/success ก่อน
+    setError("");
+    setSuccess("");
+
+    // (1) Validation ง่าย ๆ ตัวอย่าง: Password ต้อง >= 8 ตัว
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    // (2) เรียก signIn แบบไม่ redirect ทันที
     const result = await signIn("credentials", {
       email,
       password,
-      redirect: false, // <--- สำคัญ
+      redirect: false,
     });
 
     if (result?.error) {
       setError("อีเมลหรือพาสเวิร์ดไม่ถูกต้อง");
-      setSuccess(""); // เคลียร์ success
+      setSuccess("");
     } else {
       setError("");
       setSuccess("ล็อกอินสำเร็จ!");
-
-      // จากนั้นถ้าสำเร็จแล้ว ค่อย redirect ด้วยตัวเอง
+      // หากสำเร็จแล้ว ค่อย redirect ด้วยตัวเอง
       router.push("/chat");
     }
   };
@@ -95,18 +109,29 @@ function LoginPage() {
 
             <div>
               <label className="block text-gray-700 mb-1">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                placeholder="••••••••"
-              />
+
+              {/* ส่วนที่มีปุ่ม Show/Hide Password */}
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full border border-gray-300 rounded px-3 py-2 pr-10 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#5A0157] hover:bg-[#442943] text-white py-2 px-4 rounded transition-all duration-300"
+              className="w-full bg-[#5A0157] hover:bg-[#442943] text-white py-2 px-4 rounded-3xl mt-6 transition-all duration-300"
             >
               Log in
             </button>

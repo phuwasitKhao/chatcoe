@@ -7,6 +7,9 @@ import { redirect } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Terminal } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
+import logo from "@public/chatcoe.svg";
+import Image from "next/image";
+
 function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -73,23 +76,30 @@ function RegisterPage() {
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="w-full flex items-center justify-center">
-        <div className="max-w-sm w-full px-8 py-10">
+    <div className="flex h-screen ">
+      <div className="w-full flex items-center justify-center ">
+        <div className="max-w-sm w-full px-8 py-10  shadow-sm rounded-xl">
           <div className="text-4xl font-bold mb-6 flex items-center">
             Register
+            <Image
+              src={logo}
+              alt="ChatCane Logo"
+              width={24}
+              height={24}
+              className="ml-2"
+            />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-gray-700">Username</label>
+              <label className="block text-gray-700 my-1">Username</label>
               <input
                 type="text"
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
                 placeholder="Enter your name"
               />
-              <label className="block text-gray-700">Email</label>
+              <label className="block text-gray-700 my-1">Email</label>
               <input
                 type="text"
                 value={email}
@@ -97,14 +107,16 @@ function RegisterPage() {
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
                 placeholder="Enter your email"
               />
-              <label className="block text-gray-700">Password</label>
+              <label className="block text-gray-700 my-1">Password</label>
               <input
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 mb-2"
                 placeholder="Enter your password"
               />
-              <label className="block text-gray-700">Confirm Password</label>
+              <label className="block text-gray-700 my-1">
+                Confirm Password
+              </label>
               <input
                 type="password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -114,7 +126,7 @@ function RegisterPage() {
             </div>
             <button
               type="submit"
-              className="w-full bg-[#5A0157] hover:bg-[#442943] text-white py-2 px-4 rounded transition-all duration-300"
+              className="w-full bg-[#5A0157] hover:bg-[#442943] text-white py-2 px-4 rounded-3xl transition-all duration-300"
             >
               Register
             </button>
