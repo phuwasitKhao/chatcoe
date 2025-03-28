@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
 import { Pinecone } from "@pinecone-database/pinecone";
+import { ingestFile } from "./ingest";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || "",
@@ -31,3 +32,12 @@ export const embedAndStore = async (text: string, id: string) => {
         console.error("❌ Error during embedding/upsert:", error);
     }
 };
+
+const run = async () => {
+    try {
+        await ingestFile("./qa.csv"); // เปลี่ยนชื่อไฟล์ให้ตรงของคุณ
+    } catch (err) {
+        console.error("❌ Ingestion failed:", err);
+    }
+};
+run();

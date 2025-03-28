@@ -26,6 +26,7 @@
     "clsx": "^2.1.1",
     "csv-parser": "^3.2.0",
     "font-awesome": "^4.7.0",
+    "i": "^0.3.7",
     "katex": "^0.16.21",
     "lucide-react": "^0.484.0",
     "mongoose": "^8.13.0",
