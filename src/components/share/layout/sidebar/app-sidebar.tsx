@@ -6,13 +6,11 @@ import {
     BookOpen,
     Bot,
     Command,
-
     GalleryVerticalEnd,
-
     BadgeHelp,
     Settings2,
     SquareTerminal,
-    SearchSlash
+    SearchSlash, LucideIcon, Brain
 } from "lucide-react";
 import {
     Select,
@@ -63,91 +61,7 @@ const data = {
         },
     ],
     navMain: [
-        {
-            title: "Playground",
-            url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "/chat/history",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Models",
-            url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Documentation",
-            url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Settings",
-            url: "#",
-            icon: Settings2,
-            items: [
-                {
-                    title: "General",
-                    url: "#",
-                },
-                {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
-            ],
-        },
+
     ],
     projects: [
         {
@@ -171,16 +85,26 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { data: session, status } = useSession();
     const { userData, loading } = useUserData();
-    const [chatHistory, setChatHistory] = useState<any[]>([]);
+    const [chatItems, setChatItems] = useState<
+        { title: string; url: string; icon?: LucideIcon }[]
+    >([]);
 
     useEffect(() => {
         const fetchChatHistory = async () => {
-            if (session?.user?.id) { 
+            if (session?.user?.id) {
                 try {
-                    const response = await fetch(`/api/v1/chat/stream?userId=${session.user.id}`);
+                    const response = await fetch(`/api/v1/chat/chats?userId=${session.user.id}`);
                     if (response.ok) {
                         const data = await response.json();
-                        setChatHistory(data.chats || []);
+                        const chats = data.chats || [];
+
+                        const formatted = chats.map((chat: any) => ({
+                            title: chat.title || "แชทไม่มีชื่อ",
+                            url: `/chat/${chat._id || chat.id}`,
+                            icon: Brain , // หรือใช้ไอคอนอื่นที่คุณต้องการ
+                        }));
+
+                        setChatItems(formatted);
                     }
                 } catch (error) {
                     console.error("Error loading chat history:", error);
@@ -191,13 +115,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (status === "authenticated") {
             fetchChatHistory();
         }
-    }, [session, status]);  
-
+    }, [session, status]);
 
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                {/* <NavUser user={{ name: 'Nawamin Onkhwan', email: 'nawamin.o@kkumail.com', avatar: "/avatars/shadcn.jpg" }} /> */}
                 <NavUser
                     user={
                         userData
@@ -219,20 +141,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Model</SelectLabel>
-                            <SelectItem value="apple">Lama3</SelectItem>
-                            <SelectItem value="banana">ChatGpt4o4gPlus</SelectItem>
-                            <SelectItem value="blueberry">Deepseek</SelectItem>
+                            <SelectItem value="lama3">Lama3</SelectItem>
+                            <SelectItem value="chatgpt4o">ChatGpt4o4gPlus</SelectItem>
+                            <SelectItem value="deepseek">Deepseek</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
             </SidebarHeader>
+
             <SidebarContent>
-                <NavMain items={data.navMain} />
-                {/*<NavProjects projects={data.projects} />*/}
+                <NavMain items={chatItems} />
             </SidebarContent>
+
             <SidebarFooter>
                 <NavProjects projects={data.projects} />
             </SidebarFooter>
+
             <SidebarRail />
         </Sidebar>
     );
