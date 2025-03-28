@@ -36,12 +36,10 @@ export default function PageWithMainControlLayout({
       <main className="w-full h-fit">
         <div className="sticky top-0 w-full pr-2  border-b flex items-center justify-between bg-white ">
           <SidebarTrigger />
-          <Image
+          <img
             src="https://scontent.fkkc4-2.fna.fbcdn.net/v/t1.15752-9/485169210_646095441540595_4536175206696792204_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DKTs2RquwQwQ7kNvgErUP79&_nc_oc=AdlYuUpl8PcqQlULdLA6ZA40xwKmZqFMk-DI_skPPgSfz-SEDmgcwWWba-_Mz5N5RTyibsFLCCNvxEBB2NkP-Z0v&_nc_zt=23&_nc_ht=scontent.fkkc4-2.fna&oh=03_Q7cD1wEEOqV49pxDZexZ89dtuM6RuIomtVLJ2lkezNkpz1LpxQ&oe=6807A75C"
             alt="ChatCane Logo"
             className="h-14 py-2 cursor-pointer"
-            width={32}
-            height={32}
             onClick={() => router.push("/")}
           />
           <Avatar className="h-8 w-8 rounded-full ">
