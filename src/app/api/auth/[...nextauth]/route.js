@@ -21,11 +21,9 @@ export const authOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-
         await connectDB();
 
         const user = await User.findOne({ email: credentials.email });
-
         if (!user) {
           return null;
         }
@@ -34,7 +32,6 @@ export const authOptions = {
           credentials.password,
           user.password
         );
-
         if (!passwordMatch) {
           return null;
         }
