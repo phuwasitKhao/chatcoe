@@ -10,6 +10,9 @@ import { faGithub, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import kandit from "@public/images/kandit.jpg";
 import apiwat from "@public/images/apiwat.jpg";
 import beer from "@public/images/beer.jpg";
+import pleum from "@public/images/pleum.jpg";
+import khao from "@public/images/khao.jpg";
+import night from "@public/images/night.jpg";
 
 const teamMembers = [
   {
@@ -37,7 +40,7 @@ const teamMembers = [
     stuID: "653040132-0",
     instagramUrl: "https://www.instagram.com/9nigx_tt",
     instagramUsername: "9nigx_tt",
-    profileImage: kandit,
+    profileImage: night,
   },
   {
     name: "Kritsada Mahanam",
@@ -46,16 +49,16 @@ const teamMembers = [
     stuID: "653040438-6",
     instagramUrl: "https://www.instagram.com/pleumksdx_/",
     instagramUsername: "pleumksdx_",
-    profileImage: kandit,
+    profileImage: pleum,
   },
   {
-    name: "บักกอข้าว",
-    githubUrl: "https://github.com/kritsada653040438",
-    githubUsername: "kritsada653040438",
-    stuID: "653040438-6",
-    instagramUrl: "https://www.instagram.com/pleumksdx_/",
-    instagramUsername: "pleumksdx_",
-    profileImage: kandit,
+    name: "Phuwasit Nuemaihom",
+    githubUrl: "https://github.com/phuwasitKhao",
+    githubUsername: "phuwasitKhao",
+    stuID: "653040141-9",
+    instagramUrl: "https://www.instagram.com/synx._z/",
+    instagramUsername: "synx._z",
+    profileImage: khao,
   },
   {
     name: "Sakjanon Kamoldung",
@@ -83,13 +86,15 @@ const AboutPage = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="min-h-screen py-12 px-6 bg-background text-foreground">
-      <h1 className="text-3xl font-bold text-center mb-12">👨‍💻 Our Team</h1>
-
+    <div  className="min-h-screen py-12 px-6 bg-background text-foreground">
+      <h1 className="text-3xl font-bold text-center mb-12">Team Contribution</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {teamMembers.map((member, index) => (
-          <Card key={`${member.name}-${index}`} className="overflow-hidden">
-            <CardHeader className="flex items-center flex-col space-y-4">
+          <Card
+            key={`${member.name}-${index}`}
+            className="overflow-hidden shadow-lg transition-transform "
+          >
+            <CardHeader className="flex items-center flex-col space-y-4 bg-gradient-to-b from-white to-gray-100 py-6">
               <Image
                 src={
                   typeof member.profileImage === "string"
@@ -99,31 +104,31 @@ const AboutPage = () => {
                 alt={member.name}
                 width={100}
                 height={100}
-                className="rounded-full object-cover border shadow-md"
+                className="rounded-full object-cover shadow-lg"
               />
               <div className="text-center">
                 <h2 className="text-xl font-semibold">{member.name}</h2>
                 <p className="text-sm text-muted-foreground">{member.stuID}</p>
               </div>
             </CardHeader>
-
-            <CardContent className="flex justify-center gap-6 text-muted-foreground">
+  
+            <CardContent className="flex justify-center gap-6 text-muted-foreground ">
               <a
                 href={member.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-black"
+                className="flex items-center gap-2 transition-colors hover:text-[#5A0157]"
               >
-                <FontAwesomeIcon icon={faGithub} />
+                <FontAwesomeIcon icon={faGithub} className="transition-colors" />
                 <span className="text-sm">{member.githubUsername}</span>
               </a>
               <a
                 href={member.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-pink-500"
+                className="flex items-center gap-2 transition-colors hover:text-[#5A0157]"
               >
-                <FontAwesomeIcon icon={faInstagram} />
+                <FontAwesomeIcon icon={faInstagram} className="transition-colors" />
                 <span className="text-sm">{member.instagramUsername}</span>
               </a>
             </CardContent>
@@ -132,6 +137,6 @@ const AboutPage = () => {
       </div>
     </div>
   );
-};
+}  
 
 export default AboutPage;
