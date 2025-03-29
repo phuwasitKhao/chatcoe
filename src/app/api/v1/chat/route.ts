@@ -18,7 +18,7 @@
 // }
 
 import { NextRequest, NextResponse } from "next/server";
-import { createCompletion } from "@/app/api/v1/chat/chat";
+import { createCompletion } from "@/app/api/v1/chat/llm";
 import connectDB from "@/lib/mongodb";
 import Message from "@/models/Message";
 import Chat from "@/models/Chat";
