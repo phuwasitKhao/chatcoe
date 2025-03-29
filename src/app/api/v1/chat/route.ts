@@ -18,7 +18,7 @@
 // }
 
 import { NextRequest, NextResponse } from "next/server";
-import { createCompletion } from "@/app/api/v1/chat/llm";
+import { createCompletion } from "@/app/api/v1/chat/chat";
 import connectDB from "@/lib/mongodb";
 import Message from "@/models/Message";
 import Chat from "@/models/Chat";
@@ -26,19 +26,19 @@ import Chat from "@/models/Chat";
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { message, chatId, userId } = body;
-  
+
   if (!message || !chatId || !userId) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
     );
   }
-  
+
   console.log(`Processing message for chat: ${chatId}`);
-  
+
   try {
     await connectDB();
-    
+
     const userMessage = new Message({
       chatId,
       senderId: userId,
@@ -47,11 +47,11 @@ export async function POST(req: NextRequest) {
       type: "text",
       isRead: true
     });
-    
+
     await userMessage.save();
-    
+
     const completion = await createCompletion(message);
-    
+
     if (!completion) {
       console.log("Generate Error");
       return NextResponse.json(
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-    
+
     const botMessage = new Message({
       chatId,
       senderId: "bot",
@@ -68,11 +68,11 @@ export async function POST(req: NextRequest) {
       type: "text",
       isRead: true
     });
-    
+
     await botMessage.save();
-    
+
     await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
-    
+
     return NextResponse.json({ completion });
   } catch (error) {
     console.error("Error:", error);

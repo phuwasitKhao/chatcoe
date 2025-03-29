@@ -9,40 +9,40 @@ export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || ""
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-
         await connectDB();
-        
+
         const user = await User.findOne({ email: credentials.email });
-        
         if (!user) {
           return null;
         }
-        
-        const passwordMatch = await compare(credentials.password, user.password);
-        
+
+        const passwordMatch = await compare(
+          credentials.password,
+          user.password
+        );
         if (!passwordMatch) {
           return null;
         }
-        
+
         return {
           id: user._id.toString(),
           name: user.name,
-          email: user.email
+          email: user.email,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -56,15 +56,15 @@ export const authOptions = {
         session.user.id = token.id;
       }
       return session;
-    }
+    },
   },
   pages: {
-    signIn: "/login"
+    signIn: "/login",
   },
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

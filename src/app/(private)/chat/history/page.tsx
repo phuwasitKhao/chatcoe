@@ -31,7 +31,7 @@ export default function ChatHistoryPage() {
         // แสดงข้อมูล session เพื่อการ debug
         console.log("Session data:", session);
         
-        // โหลดประวัติแชท
+
         fetchChats();
     }, [status, router]);
 
