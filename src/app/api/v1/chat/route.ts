@@ -49,6 +49,23 @@ export async function POST(req: NextRequest) {
     });
 
     await userMessage.save();
+    console.log("Message saved:", userMessage);
+
+
+    const chat = await Chat.findById(chatId);
+
+    if (chat) {
+      chat.updatedAt = new Date();
+
+      if (chat.title === "New Chat") {
+        chat.title = message.substring(0, 30);
+      }
+      await chat.save();
+      console.log("Chat saved:", chat);
+    } else {
+      console.log("Chat not found:", chatId);
+
+    }
 
     const completion = await createCompletion(message);
 
@@ -71,9 +88,8 @@ export async function POST(req: NextRequest) {
 
     await botMessage.save();
 
-    await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
-
     return NextResponse.json({ completion });
+
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(

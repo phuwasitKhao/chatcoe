@@ -170,6 +170,9 @@ export default function Chat() {
   const fetchMessages = async () => {
     setIsLoading(true);
     try {
+      console.log("API request for messages", `/api/v1/chat/messages?chatId=${chatId}`);
+      console.log("Fetching messages for chatId:", chatId);
+
       const response = await fetch(`/api/v1/chat/messages?chatId=${chatId}`);
       const data = await response.json();
 
@@ -179,14 +182,19 @@ export default function Chat() {
         data: data,
       });
 
-      if (data.messages && data.messages.length > 0) {
-        const formattedMessages = data.messages.map(
-          (msg: { content: string; senderId: string }) => ({
-            text: msg.content,
-            isUser: msg.senderId !== "bot",
-          })
-        );
+      // if (data.messages && data.messages.length > 0) {
+      //const formattedMessages = data.messages.map(
+      //(msg: { content: string; senderId: string }) => ({
+      //text: msg.content,
+      //isUser: msg.senderId !== "bot",
+      //})
+      //);
 
+      if (data.messages && Array.isArray(data.messages)) {
+        const formattedMessages = data.messages.map((msg: any) => ({
+          text: msg.content,
+          isUser: msg.senderId !== "bot",
+        }))
         setMessages(formattedMessages);
       } else {
         console.log("No messages found for chatId:", chatId);
@@ -433,16 +441,14 @@ export default function Chat() {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`my-6 flex ${
-                  msg.isUser ? "justify-end" : "justify-start"
-                }`}
+                className={`my-6 flex ${msg.isUser ? "justify-end" : "justify-start"
+                  }`}
               >
                 <div
-                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${
-                    msg.isUser
-                      ? "text-white bg-purple-900"
-                      : "text-gray-800 bg-white"
-                  }`}
+                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${msg.isUser
+                    ? "text-white bg-purple-900"
+                    : "text-gray-800 bg-white"
+                    }`}
                 >
                   {msg.isUser ? (
                     msg.text

@@ -7,10 +7,10 @@ import Chat from '@/models/Chat';
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
-    
+
     const body = await req.json();
     const { chatId, content, senderId, isBot = false } = body;
-    
+
     const message = new Message({
       chatId,
       senderId: isBot ? 'bot' : senderId,
@@ -19,12 +19,12 @@ export async function POST(req: NextRequest) {
       type: 'text',
       isRead: true
     });
-    
+
     await message.save();
-    
+
     // อัพเดท updatedAt ของแชท
     await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
-    
+
     return NextResponse.json(message);
   } catch (error) {
     console.error('Error saving message:', error);
@@ -39,20 +39,22 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
-    
+
     const chatId = req.nextUrl.searchParams.get('chatId');
-    
+
     if (!chatId) {
       return NextResponse.json(
         { error: 'Chat ID is required' },
         { status: 400 }
       );
     }
-    
+    console.log("Message ID:", chatId);
+
+
     const messages = await Message.find({ chatId })
       .sort({ timestamp: 1 })
       .lean();
-    
+
     return NextResponse.json({ messages });
   } catch (error) {
     console.error('Error fetching messages:', error);
