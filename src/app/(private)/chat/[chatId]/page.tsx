@@ -171,9 +171,12 @@ export default function Chat() {
     setIsLoading(true);
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log("API request for messages", `/api/v1/chat/messages?chatId=${chatId}`);
       console.log("Fetching messages for chatId:", chatId);
 
+=======
+>>>>>>> fresh_2
 =======
 >>>>>>> fresh_2
       const response = await fetch(`/api/v1/chat/messages?chatId=${chatId}`);
@@ -185,6 +188,7 @@ export default function Chat() {
         data: data,
       });
 
+<<<<<<< HEAD
 <<<<<<< HEAD
       // if (data.messages && data.messages.length > 0) {
       //const formattedMessages = data.messages.map(
@@ -200,6 +204,8 @@ export default function Chat() {
           isUser: msg.senderId !== "bot",
         }))
 =======
+=======
+>>>>>>> fresh_2
       if (data.messages && data.messages.length > 0) {
         const formattedMessages = data.messages.map(
           (msg: { content: string; senderId: string }) => ({
@@ -208,6 +214,9 @@ export default function Chat() {
           })
         );
 
+<<<<<<< HEAD
+>>>>>>> fresh_2
+=======
 >>>>>>> fresh_2
         setMessages(formattedMessages);
       } else {
@@ -456,6 +465,7 @@ export default function Chat() {
               <div
                 key={idx}
 <<<<<<< HEAD
+<<<<<<< HEAD
                 className={`my-6 flex ${msg.isUser ? "justify-end" : "justify-start"
                   }`}
               >
@@ -465,6 +475,8 @@ export default function Chat() {
                     : "text-gray-800 bg-white"
                     }`}
 =======
+=======
+>>>>>>> fresh_2
                 className={`my-6 flex ${
                   msg.isUser ? "justify-end" : "justify-start"
                 }`}
@@ -475,6 +487,9 @@ export default function Chat() {
                       ? "text-white bg-purple-900"
                       : "text-gray-800 bg-white"
                   }`}
+<<<<<<< HEAD
+>>>>>>> fresh_2
+=======
 >>>>>>> fresh_2
                 >
                   {msg.isUser ? (
