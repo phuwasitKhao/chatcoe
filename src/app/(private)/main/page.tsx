@@ -6,8 +6,14 @@ import { Button } from "@/components/ui/button";
 import TypewriterLoop from "@/components/share/typewriter/TypewritterLoop";
 import Image from "next/image";
 import logo from "@public/chatcoe.svg";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+
 const MainPage = () => {
   const router = useRouter();
+
+  const { data: session } = useSession();
+  if (session) redirect("/chat");
 
   const handleLogin = () => {
     router.push("/login");

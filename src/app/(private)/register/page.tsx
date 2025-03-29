@@ -9,6 +9,7 @@ import { AlertCircle, Terminal } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
 import logo from "@public/chatcoe.svg";
 import Image from "next/image";
+import Register from "@public/register.svg";
 
 function RegisterPage() {
   const [name, setName] = useState("");
@@ -19,7 +20,7 @@ function RegisterPage() {
   const [success, setSuccess] = useState("");
 
   const { data: session } = useSession();
-  if (session) redirect("/welcome");
+  if (session) redirect("/chat");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -77,8 +78,9 @@ function RegisterPage() {
 
   return (
     <div className="flex h-screen ">
-      <div className="w-full flex items-center justify-center ">
-        <div className="max-w-sm w-full px-8 py-10  shadow-sm rounded-xl">
+      {/* Left side */}
+      <div className="w-1/2 flex items-center justify-end">
+        <div className="max-w-sm w-full px-8 py-10">
           <div className="text-4xl font-bold mb-6 flex items-center">
             Register
             <Image
@@ -146,6 +148,18 @@ function RegisterPage() {
               Back to login
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Right side */}
+      <div className="w-1/2 flex items-center justify-start">
+      <div className="text-center p-6">
+        <Image
+          src={Register}
+          alt="Register Image"
+          width={500}
+          height={500}
+        />
         </div>
       </div>
 

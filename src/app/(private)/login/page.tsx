@@ -5,7 +5,6 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
 import Signin from "@public/Login.svg";
 import logo from "@public/chatcoe.svg";
 import Image from "next/image";
@@ -53,11 +52,11 @@ function LoginPage() {
     });
 
     if (result?.error) {
-      setError("อีเมลหรือพาสเวิร์ดไม่ถูกต้อง");
+      setError("Email or passwords invalid");
       setSuccess("");
     } else {
       setError("");
-      setSuccess("ล็อกอินสำเร็จ!");
+      setSuccess("Login Success!");
       // หากสำเร็จแล้ว ค่อย redirect ด้วยตัวเอง
       router.push("/chat");
     }
@@ -74,8 +73,8 @@ function LoginPage() {
         <div className="text-center p-6">
           <Image
             src={Signin}
-            width={600}
-            height={600}
+            width={500}
+            height={500}
             alt="Login illustration"
           />
         </div>
