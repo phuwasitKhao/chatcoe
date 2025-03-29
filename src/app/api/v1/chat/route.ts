@@ -91,13 +91,6 @@ export async function POST(req: NextRequest) {
 
     await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
 
-
-    await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
-
-
-    await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
-
-
     return NextResponse.json({ completion });
 
   } catch (error) {
