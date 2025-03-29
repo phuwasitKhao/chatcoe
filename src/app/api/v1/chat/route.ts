@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
     });
 
     await userMessage.save();
+<<<<<<< HEAD
     console.log("Message saved:", userMessage);
 
 
@@ -66,6 +67,8 @@ export async function POST(req: NextRequest) {
       console.log("Chat not found:", chatId);
 
     }
+=======
+>>>>>>> fresh_2
 
     const completion = await createCompletion(message);
 
@@ -88,6 +91,11 @@ export async function POST(req: NextRequest) {
 
     await botMessage.save();
 
+<<<<<<< HEAD
+=======
+    await Chat.findByIdAndUpdate(chatId, { updatedAt: new Date() });
+
+>>>>>>> fresh_2
     return NextResponse.json({ completion });
 
   } catch (error) {

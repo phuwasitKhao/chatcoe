@@ -31,6 +31,23 @@ export default function ChatHistoryPage() {
     // แสดงข้อมูล session เพื่อการ debug
     console.log("Session data:", session);
 
+<<<<<<< HEAD
+=======
+    useEffect(() => {
+        if (status === "loading") return;
+        
+        if (status === "unauthenticated") {
+            router.push("/login");
+            return;
+        }
+        
+        // แสดงข้อมูล session เพื่อการ debug
+        console.log("Session data:", session);
+        
+
+        fetchChats();
+    }, [status, router]);
+>>>>>>> fresh_2
 
     fetchChats();
   }, [status, router]);
