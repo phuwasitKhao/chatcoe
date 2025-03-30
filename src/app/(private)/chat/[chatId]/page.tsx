@@ -305,8 +305,6 @@ export default function Chat() {
         } else {
           throw new Error("Failed to get chat ID from new chat");
         }
-<<<<<<< HEAD
-=======
 
         if (isGenerating) {
           console.log("Already generating response, ignoring new message");
@@ -376,7 +374,6 @@ export default function Chat() {
         ]);
         setIsGenerating(false);
         setInputLocked(false);
->>>>>>> 9fd4784242dd6e1692abfeef78492ae34b39d486
       }
       
       // ส่งข้อความ
@@ -482,18 +479,10 @@ export default function Chat() {
                 }`}
               >
                 <div
-<<<<<<< HEAD
                   className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${msg.isUser
                     ? "text-white bg-purple-900"
                     : "text-gray-800 bg-white"
                     }`}
-=======
-                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${
-                    msg.isUser
-                      ? "text-white bg-purple-900"
-                      : "text-gray-800 bg-white"
-                  }`}
->>>>>>> 9fd4784242dd6e1692abfeef78492ae34b39d486
                 >
                   {msg.isUser ? (
                     msg.text
