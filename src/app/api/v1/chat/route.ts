@@ -1,7 +1,7 @@
 // import { NextRequest, NextResponse } from "next/server";
 // import { createCompletion } from "@/app/api/v1/chat/llm";
 // import connectDB from "@/lib/mongodb";
-// import Message from "@/models/Message";
+// import Message from "@/Ps/Message";
 // import Chat from "@/models/Chat";
 
 // export async function POST(req: NextRequest) {
@@ -32,7 +32,6 @@
 //     await userMessage.save();
 
 //     console.log("Message saved:", userMessage);
-
 
 //     const chat = await Chat.findById(chatId);
 
@@ -83,7 +82,6 @@
 //   }
 // }
 
-
 import { NextRequest, NextResponse } from "next/server";
 import { ChatOpenAI } from "@langchain/openai";
 import { getPineconeClient } from "@/lib/pinecone-client";
@@ -109,7 +107,7 @@ export async function POST(req: NextRequest) {
     // ดึงประวัติการสนทนา
     // เช่น จาก DB หรือ localStorage
     const chatHistory = await fetchChatHistory(chatId);
-    
+
     // ใช้ RAG เพื่อสร้างคำตอบ
     const answer = await processUserMessage({
       userPrompt: message,
@@ -120,22 +118,25 @@ export async function POST(req: NextRequest) {
 
     // บันทึกข้อความลง database
     await saveMessage(chatId, userId, message, "user");
-    let answerString = '';
+    let answerString = "";
     for await (const chunk of answer) {
       answerString += chunk;
     }
     await saveMessage(chatId, "bot", answerString, "bot");
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       completion: answer,
-      status: "success" 
+      status: "success",
     });
   } catch (error) {
     console.error("Error in chat API:", error);
-    return NextResponse.json({ 
-      error: "Failed to process request",
-      status: "error" 
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Failed to process request",
+        status: "error",
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -146,21 +147,29 @@ async function fetchChatHistory(chatId: string) {
   try {
     const response = await fetch(`/api/v1/chat/messages?chatId=${chatId}`);
     const data = await response.json();
-    
+
     if (data.messages && data.messages.length > 0) {
       return data.messages
-        .map((msg: any) => `${msg.senderId === 'bot' ? 'assistant' : 'user'}: ${msg.content}`)
-        .join('\n');
+        .map(
+          (msg: any) =>
+            `${msg.senderId === "bot" ? "assistant" : "user"}: ${msg.content}`
+        )
+        .join("\n");
     }
-    return '';
+    return "";
   } catch (error) {
     console.error("Error fetching chat history:", error);
-    return '';
+    return "";
   }
 }
 
 // ฟังก์ชันสำหรับบันทึกข้อความ
-async function saveMessage(chatId: string, senderId: string, content: string, role: string) {
+async function saveMessage(
+  chatId: string,
+  senderId: string,
+  content: string,
+  role: string
+) {
   // บันทึกข้อความลง DB
   try {
     await fetch("/api/v1/chat/messages", {
@@ -172,7 +181,7 @@ async function saveMessage(chatId: string, senderId: string, content: string, ro
         chatId,
         senderId,
         content,
-        role
+        role,
       }),
     });
   } catch (error) {

@@ -99,6 +99,7 @@ export default function Chat() {
             );
             router.push(`/chat/${latestChat._id || latestChat.id}`);
           } else {
+            createNewChat(session, router, setIsLoading);
             console.log("No existing chats found, staying on this page");
           }
         } catch (error) {
@@ -124,48 +125,48 @@ export default function Chat() {
 
         router.push(`/chat/${data.chats[0]._id || data.chats[0].id}`);
       } else {
-        createNewChat();
+        createNewChat(session, router, setIsLoading);
       }
     } catch (error) {
       console.error("Error loading chats:", error);
 
-      createNewChat();
+      createNewChat(session, router, setIsLoading);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const createNewChat = async () => {
-    if (isLoading) {
-      console.log("Already creating chat, please wait");
-      return;
-    }
+  // const createNewChat = async () => {
+  //   if (isLoading) {
+  //     console.log("Already creating chat, please wait");
+  //     return;
+  //   }
 
-    setIsLoading(true);
+  //   setIsLoading(true);
 
-    try {
-      const response = await fetch("/api/v1/chat/stream", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ownerId: session?.user?.id || "anonymous",
-          title: "New Chat",
-        }),
-      });
+  //   try {
+  //     const response = await fetch("/api/v1/chat/stream", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         ownerId: session?.user?.id || "anonymous",
+  //         title: "New Chat",
+  //       }),
+  //     });
 
-      const data = await response.json();
-      console.log("Created chat:", data);
-      if (data.id || data._id) {
-        router.push(`/chat/${data.id || data._id}`);
-      } else {
-        console.error("No chat ID returned from API");
-      }
-    } catch (error) {
-      console.error("Error creating new chat:", error);
-    }
-  };
+  //     const data = await response.json();
+  //     console.log("Created chat:", data);
+  //     if (data.id || data._id) {
+  //       router.push(`/chat/${data.id || data._id}`);
+  //     } else {
+  //       console.error("No chat ID returned from API");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating new chat:", error);
+  //   }
+  // };
 
   const fetchMessages = async () => {
     setIsLoading(true);
@@ -306,7 +307,6 @@ export default function Chat() {
         //   }),
         // });
 
-
         const response = await fetch("/api/v1/chat", {
           method: "POST",
           headers: {
@@ -420,7 +420,7 @@ export default function Chat() {
     <div className="w-full h-[calc(100vh-125px)] flex flex-col">
       <div className="p-4 flex justify-between items-center">
         <Button
-          onClick={createNewChat}
+          onClick={() => createNewChat(session, router, setIsLoading)}
           variant="outline"
           className="flex items-center"
         >
@@ -446,14 +446,16 @@ export default function Chat() {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`my-6 flex ${msg.isUser ? "justify-end" : "justify-start"
-                  }`}
+                className={`my-6 flex ${
+                  msg.isUser ? "justify-end" : "justify-start"
+                }`}
               >
                 <div
-                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${msg.isUser
+                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${
+                    msg.isUser
                       ? "text-white bg-purple-900"
                       : "text-gray-800 bg-white"
-                    }`}
+                  }`}
                 >
                   {msg.isUser ? (
                     msg.text
@@ -531,3 +533,36 @@ export default function Chat() {
     </div>
   );
 }
+
+export const createNewChat = async (
+  session: any,
+  router: any,
+  setIsLoading: (v: boolean) => void
+) => {
+  // ตั้งค่า loading เป็น true
+  setIsLoading(true);
+  try {
+    const response = await fetch("/api/v1/chat/stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ownerId: session?.user?.id || "anonymous",
+        title: "New Chat",
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Created chat:", data);
+    if (data.id || data._id) {
+      router.push(`/chat/${data.id || data._id}`);
+    } else {
+      console.error("No chat ID returned from API");
+    }
+  } catch (error) {
+    console.error("Error creating new chat:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
