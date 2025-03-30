@@ -19,7 +19,7 @@
 - **Real-time Responses**: Get instant, high-quality replies from advanced AI models
 - **Secure & Private**: Your conversations remain confidential and secure
 - **File Upload & Analysis**: Upload documents, images, and data files for AI analysis and learning
-- **ChatCoE Pro Subscription**: Unlock premium features and support development with affordable subscription options
+- **ChatCoE Pro Subscription**: Unlock pro features and support development with affordable subscription options
 
 ## 🚀 Getting Started
 
@@ -95,7 +95,7 @@ If you encounter any issues while using ChatCoE:
 
 5. **Contact Support**:
    - Visit our [[Help Center](https://chatcoe-iota.vercel.app/help)] for additional assistance
-   - Reach out to our support team at support@chatcoe.ai if problems persist
+   - Reach out to our support team at phuwasit.n@kkumail.com if problems persist
 
 ## 👨‍💻 Development Team
 
