@@ -95,9 +95,9 @@ export default function Page() {
   }
 
   return (
-    <div className="h-[calc(100vh-57px)] flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500 py-10 px-4">
+    <div className="h-[calc(100vh-57px)] flex items-center justify-center bg-white py-10 px-4">
       <Card className="w-full max-w-lg shadow-xl border-0 bg-white rounded-xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500  text-white p-6 text-center">
+        <CardHeader className="bg-[#5A0157]  text-white p-6 text-center">
           <CardTitle className="text-2xl font-bold flex justify-center items-center">
             <Upload className="mr-2 w-6 h-6" /> อัพโหลดเอกสาร PDF
           </CardTitle>
@@ -116,15 +116,16 @@ export default function Page() {
               <p className="text-gray-500 mt-1">
                 ไฟล์ของคุณถูกบันทึกเรียบร้อยแล้ว
               </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
               {documentId && (
-                <div className="mt-3 bg-blue-50 p-3 rounded-lg inline-block">
-                  <p className="text-sm text-blue-700 font-medium">
+                <div className="mt-3 bg-pink-50 p-3 rounded-lg inline-block">
+                  <p className="text-sm text-[#5A0157] font-medium">
                     รหัสเอกสาร: {documentId}
                   </p>
                 </div>
               )}
               <Button
-                className="mt-5 bg-blue-500 hover:bg-blue-600 transition-colors px-5 py-2 rounded-lg w-full sm:w-auto"
+                className="mt-5 bg-[#80007b] hover:bg-[#5A0157] transition-colors px-5 py-2 rounded-lg w-full sm:w-auto"
                 onClick={() => {
                   setFile(null);
                   setStatus("idle");
@@ -133,6 +134,7 @@ export default function Page() {
               >
                 อัพโหลดไฟล์อื่น
               </Button>
+              </div>
             </div>
           ) : status === "error" ? (
             <div className="text-center py-4">
@@ -152,9 +154,9 @@ export default function Page() {
             </div>
           ) : file ? (
             <div className="space-y-4">
-              <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
-                <div className="bg-blue-100 p-2 rounded-md">
-                  <FileText className="text-blue-600 w-5 h-5" />
+              <div className="flex items-center p-4 border border-pink-200 rounded-lg bg-pink-50 hover:bg-pink-100 transition-colors">
+                <div className="bg-pink-100 p-2 rounded-md">
+                  <FileText className="text-[#5A0157] w-5 h-5" />
                 </div>
                 <div className="ml-4 flex-1">
                   <h3 className="font-medium text-gray-800">{file.title}</h3>
@@ -164,21 +166,21 @@ export default function Page() {
                 </div>
                 <Button
                   variant="outline"
-                  className="border-gray-300 hover:bg-gray-100 transition-colors text-sm"
+                  className="border-pink-200 hover:bg-pink-100 bg-white transition-colors text-sm text-[#5A0157]"
                   onClick={() => setFile(null)}
                 >
                   เปลี่ยนไฟล์
                 </Button>
               </div>
               {loading ? (
-                <div className="flex items-center justify-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <Loader2 className="animate-spin w-5 h-5 text-blue-500 mr-2" />
-                  <span className="text-gray-700">{loadingMsg}</span>
+                <div className="flex items-center justify-center p-3 bg-pink-50 rounded-lg border border-pink-200">
+                  <Loader2 className="animate-spin w-5 h-5 text-[#5A0157] mr-2" />
+                  <span className="text-[#5A0157]">{loadingMsg}</span>
                 </div>
               ) : (
                 <Button
                   onClick={() => submit()}
-                  className="w-full bg-blue-500 hover:bg-blue-600 transition-colors py-3 rounded-lg flex items-center justify-center"
+                  className="w-full bg-[#80007b] hover:bg-[#5A0157] transition-colors py-3 rounded-lg flex items-center justify-center"
                 >
                   <span className="mr-2">บันทึกลงฐานข้อมูล</span>
                   <ArrowRight className="w-4 h-4" />
@@ -194,7 +196,7 @@ export default function Page() {
                   ) as HTMLInputElement
                 )?.click()
               }
-              className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-blue-300 transition-colors cursor-pointer"
+              className="border-2 border-dashed border-pink-200 rounded-xl p-8 text-center hover:border-[#5A0157] transition-colors cursor-pointer"
             >
               <PDFFileUpload
                 label="อัพโหลดไฟล์ PDF"
@@ -207,7 +209,7 @@ export default function Page() {
           )}
         </CardContent>
 
-        <CardFooter className="text-sm text-gray-500 p-4 bg-gray-100 text-center">
+        <CardFooter className="text-sm text-[#5A0157] p-4 bg-white text-center">
           รองรับไฟล์ PDF ขนาดไม่เกิน 16MB
         </CardFooter>
       </Card>
