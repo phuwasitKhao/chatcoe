@@ -239,46 +239,18 @@ export default function Chat() {
     }, 30);
   };
 
-  const sendMessage = async (e) => {
-    // ป้องกันการรีเฟรชหน้าเริ่มต้น
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
-  
+  const sendMessage = async () => {
     const userInput = inputRef.current?.value.trim();
     console.log("Sending message:", userInput, "to chat:", chatId);
-  
+
     if (!userInput || inputLocked) {
       console.log("Cannot send: empty input or input locked");
       return;
     }
-  
-    // เพิ่มข้อความผู้ใช้ลงใน UI
-    setMessages((prev) => [...prev, { text: userInput, isUser: true }]);
-    setInputLocked(true);
-    setIsGenerating(true);
-    setStartTime(Date.now());
-    setElapsedTime(null);
-  
-    if (inputRef.current) inputRef.current.value = "";
-  
-    // แสดงไฟ loading
-    setMessages((prev) => [
-      ...prev,
-      {
-        text: `<span class="animate-dots">
-              <span></span><span></span><span></span>
-            </span>`,
-        isUser: false,
-      },
-    ]);
-  
-    try {
-      let currentChatId = chatId;
-      
-      // ถ้าไม่มี chatId ให้สร้างแชทใหม่ก่อน
-      if (!currentChatId) {
-        console.log("Creating new chat...");
+
+    if (!chatId) {
+      console.log("Missing chatId, creating new chat first");
+      try {
         const createResponse = await fetch("/api/v1/chat/stream", {
           method: "POST",
           headers: {
@@ -289,24 +261,14 @@ export default function Chat() {
             title: userInput.substring(0, 30),
           }),
         });
-        
-        if (!createResponse.ok) {
-          throw new Error(`Failed to create chat: ${createResponse.status}`);
-        }
-        
+
         const chatData = await createResponse.json();
-        currentChatId = chatData.id || chatData._id;
-        
-        console.log("New chat created with ID:", currentChatId);
-        
-        // อัปเดต URL แบบ client-side โดยไม่มีการรีเฟรชหน้า
-        if (currentChatId) {
-          router.push(`/chat/${currentChatId}`, undefined, { shallow: true });
-        } else {
-          throw new Error("Failed to get chat ID from new chat");
+        const newChatId = chatData.id || chatData._id;
+
+        if (!newChatId) {
+          console.error("Failed to get chat ID from new chat");
+          return;
         }
-<<<<<<< HEAD
-=======
 
         if (isGenerating) {
           console.log("Already generating response, ignoring new message");
@@ -376,53 +338,60 @@ export default function Chat() {
         ]);
         setIsGenerating(false);
         setInputLocked(false);
->>>>>>> 9fd4784242dd6e1692abfeef78492ae34b39d486
       }
-      
-      // ส่งข้อความ
-      console.log(`Sending message to chat ID: ${currentChatId}`);
+      return;
+    }
+
+    setMessages((prev) => [...prev, { text: userInput, isUser: true }]);
+    setInputLocked(true);
+    setIsGenerating(true);
+    setStartTime(Date.now());
+    setElapsedTime(null);
+
+    if (inputRef.current) inputRef.current.value = "";
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        text: `<span class="animate-dots">
+              <span></span><span></span><span></span>
+            </span>`,
+        isUser: false,
+      },
+    ]);
+
+    try {
       const response = await fetch("/api/v1/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
-            {
-              role: "user",
-              content: userInput
-            }
-          ],
-          chatId: currentChatId,
+          message: userInput,
+          chatId: chatId,
           userId: session?.user?.id || "anonymous",
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-      
-      // รับข้อมูลการตอบกลับ
+
       const data = await response.json();
-      console.log("Response received:", data);
-      
-      // อัปเดต UI ด้วยคำตอบ
       const botText = data.completion || "";
       typeBotResponse(botText);
-      
     } catch (error) {
-      console.error("Error in sendMessage:", error);
+      console.error("Error sending message:", error);
       setMessages((prev) => [
-        ...prev.slice(0, -1), // ลบข้อความ loading
-        { text: `เกิดข้อผิดพลาด: ${error.message}`, isUser: false },
+        ...prev,
+        { text: "ไม่สามารถติดต่อกับ Chatbot ได้", isUser: false },
       ]);
-    } finally {
       setIsGenerating(false);
+    } finally {
       setInputLocked(false);
     }
   };
 
-  
   const handleKeyPress = (event: React.KeyboardEvent) => {
     console.log("Key pressed:", event.key);
     if (event.key === "Enter" && !inputLocked) {
@@ -482,18 +451,11 @@ export default function Chat() {
                 }`}
               >
                 <div
-<<<<<<< HEAD
-                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${msg.isUser
-                    ? "text-white bg-purple-900"
-                    : "text-gray-800 bg-white"
-                    }`}
-=======
                   className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${
                     msg.isUser
                       ? "text-white bg-purple-900"
                       : "text-gray-800 bg-white"
                   }`}
->>>>>>> 9fd4784242dd6e1692abfeef78492ae34b39d486
                 >
                   {msg.isUser ? (
                     msg.text
