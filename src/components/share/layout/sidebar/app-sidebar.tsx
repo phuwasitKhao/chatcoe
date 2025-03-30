@@ -36,7 +36,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { createNewChat } from "@/app/(private)/chat/[chatId]/page";
+import createNewChat from "@/app/(private)/chat/[chatId]/page";
 
 const data = {
   user: {
@@ -125,13 +125,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           user={
             userData
               ? {
-                  name: userData.name,
-                  email: userData.email,
-                  avatar: userData.avatar || "/avatars/default.jpg",
-                }
+                name: userData.name,
+                email: userData.email,
+                avatar: userData.avatar || "/avatars/default.jpg",
+              }
               : loading
-              ? { name: "กำลังโหลด...", email: "", avatar: "" }
-              : {
+                ? { name: "กำลังโหลด...", email: "", avatar: "" }
+                : {
                   name: "ยังไม่ได้เข้าสู่ระบบ",
                   email: "",
                   avatar: "/avatars/default.jpg",
