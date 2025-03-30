@@ -50,7 +50,7 @@ export async function processUserMessage({
 
     // สร้าง nonStreamingModel ที่ใช้ OpenRouter
     const nonStreamingModel = new ChatOpenAI({
-      modelName: "gpt-3.5-turbo", // ระบุชื่อโมเดลโดยตรงแทนการใช้ environment variable
+      modelName: "gpt-3.5-turbo",
       temperature: 0.0,
       streaming: false,
       apiKey: process.env.API_KEY_MODEL,

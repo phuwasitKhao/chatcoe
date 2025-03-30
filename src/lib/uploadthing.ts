@@ -1,5 +1,5 @@
 // import { OurFileRouter } from "@/app/api/uploadthing/core";
-import { OurFileRouter } from "@/app/api/v1/uploadthing/core";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
 import {
   generateUploadButton,
   generateUploadDropzone,
