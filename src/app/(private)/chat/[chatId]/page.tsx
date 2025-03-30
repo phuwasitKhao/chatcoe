@@ -1,3 +1,4 @@
+//chat/chatId/page.tsx
 "use client";
 import React, { useRef, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
@@ -25,7 +26,10 @@ export default function Chat() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const chatId = params?.id as string;
+  const initialChatId = params?.id as string;
+
+  // เพิ่มสเตทสำหรับเก็บ chatId ที่สามารถอัปเดตได้
+  const [localChatId, setLocalChatId] = useState(initialChatId);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,32 +42,6 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<any[]>([]);
 
-  // // ตรวจสอบการล็อกอิน
-  // useEffect(() => {
-  //     if (status === "loading") return;
-  //     if (status === "unauthenticated") {
-  //         router.push("/login");
-  //     }
-  // }, [status, router]);
-
-  // useEffect(() => {
-  //     if (!chatId && status === "authenticated") {
-  //         loadChats();
-  //     }
-  // }, [chatId, status]);
-
-  // useEffect(() => {
-  //     if (chatId && status === "authenticated") {
-  //         fetchMessages();
-  //     }
-  // }, [chatId, status]);
-
-  // useEffect(() => {
-  //     if (messagesRef.current) {
-  //         messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-  //     }
-  // }, [messages]);
-
   useEffect(() => {
     if (status === "loading") return;
 
@@ -72,17 +50,17 @@ export default function Chat() {
       return;
     }
 
-    if (!chatId && status === "authenticated") {
+    if (!localChatId && status === "authenticated") {
       loadChats();
-    } else if (chatId && status === "authenticated") {
+    } else if (localChatId && status === "authenticated") {
       fetchMessages();
     }
-  }, [chatId, status, session]);
+  }, [localChatId, status, session]);
 
   useEffect(() => {
-    console.log("Current chatId:", chatId);
+    console.log("Current chatId:", localChatId);
 
-    if (!chatId && status === "authenticated") {
+    if (!localChatId && status === "authenticated") {
       console.log("No chatId provided, checking for existing chats");
 
       const loadChats = async () => {
@@ -93,11 +71,12 @@ export default function Chat() {
 
           if (data.chats && data.chats.length > 0) {
             const latestChat = data.chats[0];
-            console.log(
-              "Found existing chat, redirecting to:",
-              latestChat._id || latestChat.id
-            );
-            router.push(`/chat/${latestChat._id || latestChat.id}`);
+            const chatId = latestChat._id || latestChat.id;
+            console.log("Found existing chat, redirecting to:", chatId);
+
+            // ใช้ window.history.pushState แทน router.push
+            window.history.pushState({}, '', `/chat/${chatId}`);
+            setLocalChatId(chatId);
           } else {
             createNewChat(session, router, setIsLoading);
             console.log("No existing chats found, staying on this page");
@@ -108,10 +87,17 @@ export default function Chat() {
       };
 
       loadChats();
-    } else if (chatId) {
+    } else if (localChatId) {
       fetchMessages();
     }
-  }, [chatId, status, session]);
+  }, [localChatId, status, session]);
+
+  // เพิ่ม useEffect เพื่อเลื่อนสกรอลไปล่างสุดเมื่อมีข้อความใหม่
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const loadChats = async () => {
     try {
@@ -122,15 +108,22 @@ export default function Chat() {
 
       if (data.chats && data.chats.length > 0) {
         setChats(data.chats);
+        const chatId = data.chats[0]._id || data.chats[0].id;
 
-        router.push(`/chat/${data.chats[0]._id || data.chats[0].id}`);
+        // ใช้ window.history.pushState แทน router.push
+        window.history.pushState({}, '', `/chat/${chatId}`);
+        setLocalChatId(chatId);
       } else {
         createNewChat(session, router, setIsLoading);
       }
     } catch (error) {
       console.error("Error loading chats:", error);
+<<<<<<< HEAD
 
       createNewChat(session, router, setIsLoading);
+=======
+      createNewChat();
+>>>>>>> 13ba10cbf7f684a378ce2f971e4e0131fb48cbd7
     } finally {
       setIsLoading(false);
     }
@@ -156,6 +149,7 @@ export default function Chat() {
   //       }),
   //     });
 
+<<<<<<< HEAD
   //     const data = await response.json();
   //     console.log("Created chat:", data);
   //     if (data.id || data._id) {
@@ -167,16 +161,35 @@ export default function Chat() {
   //     console.error("Error creating new chat:", error);
   //   }
   // };
+=======
+      const data = await response.json();
+      console.log("Created chat:", data);
+      if (data.id || data._id) {
+        const chatId = data.id || data._id;
+
+        // ใช้ window.history.pushState แทน router.push
+        window.history.pushState({}, '', `/chat/${chatId}`);
+        setLocalChatId(chatId);
+      } else {
+        console.error("No chat ID returned from API");
+      }
+    } catch (error) {
+      console.error("Error creating new chat:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+>>>>>>> 13ba10cbf7f684a378ce2f971e4e0131fb48cbd7
 
   const fetchMessages = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/v1/chat/messages?chatId=${chatId}`);
+      const response = await fetch(`/api/v1/chat/messages?chatId=${localChatId}`);
       const data = await response.json();
 
       console.log("Fetched messages response:", {
         status: response.status,
-        chatId: chatId,
+        chatId: localChatId,
         data: data,
       });
 
@@ -190,7 +203,7 @@ export default function Chat() {
 
         setMessages(formattedMessages);
       } else {
-        console.log("No messages found for chatId:", chatId);
+        console.log("No messages found for chatId:", localChatId);
         setMessages([]);
       }
     } catch (error) {
@@ -240,28 +253,27 @@ export default function Chat() {
   };
 
   const sendMessage = async (e) => {
-    // ป้องกันการรีเฟรชหน้าเริ่มต้น
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-  
+
     const userInput = inputRef.current?.value.trim();
-    console.log("Sending message:", userInput, "to chat:", chatId);
-  
+    console.log("Sending message:", userInput, "to chat:", localChatId);
+
     if (!userInput || inputLocked) {
       console.log("Cannot send: empty input or input locked");
       return;
     }
-  
+
     // เพิ่มข้อความผู้ใช้ลงใน UI
     setMessages((prev) => [...prev, { text: userInput, isUser: true }]);
     setInputLocked(true);
     setIsGenerating(true);
     setStartTime(Date.now());
     setElapsedTime(null);
-  
+
     if (inputRef.current) inputRef.current.value = "";
-  
+
     // แสดงไฟ loading
     setMessages((prev) => [
       ...prev,
@@ -272,10 +284,10 @@ export default function Chat() {
         isUser: false,
       },
     ]);
-  
+
     try {
-      let currentChatId = chatId;
-      
+      let currentChatId = localChatId;
+
       // ถ้าไม่มี chatId ให้สร้างแชทใหม่ก่อน
       if (!currentChatId) {
         console.log("Creating new chat...");
@@ -289,19 +301,21 @@ export default function Chat() {
             title: userInput.substring(0, 30),
           }),
         });
-        
+
         if (!createResponse.ok) {
           throw new Error(`Failed to create chat: ${createResponse.status}`);
         }
-        
+
         const chatData = await createResponse.json();
         currentChatId = chatData.id || chatData._id;
-        
+
         console.log("New chat created with ID:", currentChatId);
-        
+
         // อัปเดต URL แบบ client-side โดยไม่มีการรีเฟรชหน้า
         if (currentChatId) {
-          router.push(`/chat/${currentChatId}`, undefined, { shallow: true });
+          // ใช้ window.history.pushState แทน router.push
+          window.history.pushState({}, '', `/chat/${currentChatId}`);
+          setLocalChatId(currentChatId);
         } else {
           throw new Error("Failed to get chat ID from new chat");
         }
@@ -375,7 +389,7 @@ export default function Chat() {
         setIsGenerating(false);
         setInputLocked(false);
       }
-      
+
       // ส่งข้อความ
       console.log(`Sending message to chat ID: ${currentChatId}`);
       const response = await fetch("/api/v1/chat", {
@@ -394,19 +408,19 @@ export default function Chat() {
           userId: session?.user?.id || "anonymous",
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       // รับข้อมูลการตอบกลับ
       const data = await response.json();
       console.log("Response received:", data);
-      
+
       // อัปเดต UI ด้วยคำตอบ
       const botText = data.completion || "";
       typeBotResponse(botText);
-      
+
     } catch (error) {
       console.error("Error in sendMessage:", error);
       setMessages((prev) => [
@@ -419,12 +433,12 @@ export default function Chat() {
     }
   };
 
-  
   const handleKeyPress = (event: React.KeyboardEvent) => {
     console.log("Key pressed:", event.key);
     if (event.key === "Enter" && !inputLocked) {
+      event.preventDefault(); // เพิ่มบรรทัดนี้เพื่อป้องกันการ submit form
       console.log("Enter pressed, sending message");
-      sendMessage();
+      sendMessage(event);
     }
   };
 
@@ -451,6 +465,7 @@ export default function Chat() {
           onClick={() => createNewChat(session, router, setIsLoading)}
           variant="outline"
           className="flex items-center"
+          type="button" // เพิ่ม type="button" เพื่อป้องกันการ submit form
         >
           <PlusCircle className="w-4 h-4 mr-2" />
           แชทใหม่
@@ -515,7 +530,7 @@ export default function Chat() {
           </div>
         )}
 
-        <div className="w-full xl:w-2/3 relative flex items-center bg-white rounded-full px-4   bottom-4">
+        <div className="w-full xl:w-2/3 relative flex items-center bg-white rounded-full px-4 bottom-4">
           <Input
             placeholder="จะทำอะไรให้ดี?"
             ref={inputRef}
@@ -524,37 +539,14 @@ export default function Chat() {
             className="rounded-xl"
           />
           <Button
+            type="button" // เปลี่ยนเป็น button แทน submit
             variant="default"
-            onClick={sendMessage}
+            onClick={(e) => sendMessage(e)}
             disabled={inputLocked}
             className="ml-2 px-3 py-2 rounded-xl"
           >
             <ArrowRight className="w-5 h-5" />
           </Button>
-          {/* <Input
-                        placeholder="ต้องการสอบถามอะไร?"
-                        ref={inputRef}
-                        disabled={inputLocked}
-                        onKeyDown={(e) => {
-                            console.log("Key down:", e.key);
-                            if (e.key === "Enter" && !inputLocked) {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        }}
-                        className="rounded-xl"
-                    />
-                    <Button
-                        variant="default"
-                        onClick={() => {
-                            console.log("Send button clicked");
-                            sendMessage();
-                        }}
-                        disabled={inputLocked}
-                        className="ml-2 px-3 py-2 rounded-xl"
-                    >
-                        <ArrowRight className="w-5 h-5" />
-                    </Button> */}
         </div>
       </div>
     </div>

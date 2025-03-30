@@ -1,3 +1,4 @@
+//chat/page.tsx
 "use client";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -8,12 +9,12 @@ export default function ChatPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return;
+    // if (status === "loading") return;
 
-    if (status === "unauthenticated") {
-      router.push("/login");
-      return;
-    }
+    // if (status === "unauthenticated") {
+    //   router.push("/login");
+    //   return;
+    // }
 
     const loadChats = async () => {
       try {
