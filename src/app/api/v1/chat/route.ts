@@ -71,7 +71,8 @@ export async function POST(req: NextRequest) {
       configuration: {
         baseURL: process.env.API_KEY_URL,
         defaultHeaders: {
-          "HTTP-Referer": "http://localhost:3000",
+          // "HTTP-Referer": "http://localhost:3000",
+          "HTTP-Referer": "https://chatcoe-iota.vercel.app",
           "X-Title": "CoE Assistant",
         },
       },

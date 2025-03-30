@@ -58,7 +58,7 @@ export async function processUserMessage({
       configuration: {
         baseURL: process.env.API_KEY_URL,
         defaultHeaders: {
-          "HTTP-Referer": "http://localhost:3000", // แก้ไขตามโดเมนของคุณ
+          "HTTP-Referer": "https://chatcoe-iota.vercel.app", // แก้ไขตามโดเมนของคุณ
           "X-Title": "CoE Assistant",
         },
       },
