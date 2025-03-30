@@ -1,3 +1,4 @@
+//chat/chatId/page.tsx
 "use client";
 import React, { useRef, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
@@ -25,7 +26,10 @@ export default function Chat() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
-  const chatId = params?.id as string;
+  const initialChatId = params?.id as string;
+
+  // เพิ่มสเตทสำหรับเก็บ chatId ที่สามารถอัปเดตได้
+  const [localChatId, setLocalChatId] = useState(initialChatId);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,32 +42,6 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<any[]>([]);
 
-  // // ตรวจสอบการล็อกอิน
-  // useEffect(() => {
-  //     if (status === "loading") return;
-  //     if (status === "unauthenticated") {
-  //         router.push("/login");
-  //     }
-  // }, [status, router]);
-
-  // useEffect(() => {
-  //     if (!chatId && status === "authenticated") {
-  //         loadChats();
-  //     }
-  // }, [chatId, status]);
-
-  // useEffect(() => {
-  //     if (chatId && status === "authenticated") {
-  //         fetchMessages();
-  //     }
-  // }, [chatId, status]);
-
-  // useEffect(() => {
-  //     if (messagesRef.current) {
-  //         messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-  //     }
-  // }, [messages]);
-
   useEffect(() => {
     if (status === "loading") return;
 
@@ -72,17 +50,17 @@ export default function Chat() {
       return;
     }
 
-    if (!chatId && status === "authenticated") {
+    if (!localChatId && status === "authenticated") {
       loadChats();
-    } else if (chatId && status === "authenticated") {
+    } else if (localChatId && status === "authenticated") {
       fetchMessages();
     }
-  }, [chatId, status, session]);
+  }, [localChatId, status, session]);
 
   useEffect(() => {
-    console.log("Current chatId:", chatId);
+    console.log("Current chatId:", localChatId);
 
-    if (!chatId && status === "authenticated") {
+    if (!localChatId && status === "authenticated") {
       console.log("No chatId provided, checking for existing chats");
 
       const loadChats = async () => {
@@ -93,13 +71,12 @@ export default function Chat() {
 
           if (data.chats && data.chats.length > 0) {
             const latestChat = data.chats[0];
-            console.log(
-              "Found existing chat, redirecting to:",
-              latestChat._id || latestChat.id
-            );
-            router.push(`/chat/${latestChat._id || latestChat.id}`);
+            const chatId = latestChat._id || latestChat.id;
+            console.log("Found existing chat, redirecting to:", chatId);
+
+            window.history.pushState({}, '', `/chat/${chatId}`);
+            setLocalChatId(chatId);
           } else {
-            createNewChat(session, router, setIsLoading);
             console.log("No existing chats found, staying on this page");
           }
         } catch (error) {
@@ -108,10 +85,16 @@ export default function Chat() {
       };
 
       loadChats();
-    } else if (chatId) {
+    } else if (localChatId) {
       fetchMessages();
     }
-  }, [chatId, status, session]);
+  }, [localChatId, status, session]);
+
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const loadChats = async () => {
     try {
@@ -122,61 +105,67 @@ export default function Chat() {
 
       if (data.chats && data.chats.length > 0) {
         setChats(data.chats);
+        const chatId = data.chats[0]._id || data.chats[0].id;
 
-        router.push(`/chat/${data.chats[0]._id || data.chats[0].id}`);
+        window.history.pushState({}, '', `/chat/${chatId}`);
+        setLocalChatId(chatId);
       } else {
-        createNewChat(session, router, setIsLoading);
+        createNewChat();
       }
     } catch (error) {
       console.error("Error loading chats:", error);
-
-      createNewChat(session, router, setIsLoading);
+      createNewChat();
     } finally {
       setIsLoading(false);
     }
   };
 
-  // const createNewChat = async () => {
-  //   if (isLoading) {
-  //     console.log("Already creating chat, please wait");
-  //     return;
-  //   }
+  const createNewChat = async () => {
+    if (isLoading) {
+      console.log("Already creating chat, please wait");
+      return;
+    }
 
-  //   setIsLoading(true);
+    setIsLoading(true);
 
-  //   try {
-  //     const response = await fetch("/api/v1/chat/stream", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         ownerId: session?.user?.id || "anonymous",
-  //         title: "New Chat",
-  //       }),
-  //     });
+    try {
+      const response = await fetch("/api/v1/chat/stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ownerId: session?.user?.id || "anonymous",
+          title: "New Chat",
+        }),
+      });
 
-  //     const data = await response.json();
-  //     console.log("Created chat:", data);
-  //     if (data.id || data._id) {
-  //       router.push(`/chat/${data.id || data._id}`);
-  //     } else {
-  //       console.error("No chat ID returned from API");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating new chat:", error);
-  //   }
-  // };
+      const data = await response.json();
+      console.log("Created chat:", data);
+      if (data.id || data._id) {
+        const chatId = data.id || data._id;
+
+        window.history.pushState({}, '', `/chat/${chatId}`);
+        setLocalChatId(chatId);
+      } else {
+        console.error("No chat ID returned from API");
+      }
+    } catch (error) {
+      console.error("Error creating new chat:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchMessages = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/v1/chat/messages?chatId=${chatId}`);
+      const response = await fetch(`/api/v1/chat/messages?chatId=${localChatId}`);
       const data = await response.json();
 
       console.log("Fetched messages response:", {
         status: response.status,
-        chatId: chatId,
+        chatId: localChatId,
         data: data,
       });
 
@@ -190,7 +179,7 @@ export default function Chat() {
 
         setMessages(formattedMessages);
       } else {
-        console.log("No messages found for chatId:", chatId);
+        console.log("No messages found for chatId:", localChatId);
         setMessages([]);
       }
     } catch (error) {
@@ -202,18 +191,30 @@ export default function Chat() {
   };
 
   const typeBotResponse = (response: string) => {
+
+
+    console.log("Typing bot response:", response);
+
     let idx = 0;
     const start = Date.now();
     setIsGenerating(true);
+
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+    }
 
     typingIntervalRef.current = setInterval(() => {
       if (idx <= response.length) {
         setMessages((prev) => {
           const newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage && lastMessage.isUser === false) {
+            newMessages.pop();
+          }
+          newMessages.push({
             text: response.slice(0, idx),
             isUser: false,
-          };
+          });
           return newMessages;
         });
         idx++;
@@ -240,28 +241,26 @@ export default function Chat() {
   };
 
   const sendMessage = async (e) => {
-    // ป้องกันการรีเฟรชหน้าเริ่มต้น
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-  
+
     const userInput = inputRef.current?.value.trim();
-    console.log("Sending message:", userInput, "to chat:", chatId);
-  
+    console.log("Sending message:", userInput, "to chat:", localChatId);
+
     if (!userInput || inputLocked) {
       console.log("Cannot send: empty input or input locked");
       return;
     }
-  
-    // เพิ่มข้อความผู้ใช้ลงใน UI
+
     setMessages((prev) => [...prev, { text: userInput, isUser: true }]);
     setInputLocked(true);
     setIsGenerating(true);
     setStartTime(Date.now());
     setElapsedTime(null);
-  
+
     if (inputRef.current) inputRef.current.value = "";
-  
+
     // แสดงไฟ loading
     setMessages((prev) => [
       ...prev,
@@ -272,11 +271,10 @@ export default function Chat() {
         isUser: false,
       },
     ]);
-  
+
     try {
-      let currentChatId = chatId;
-      
-      // ถ้าไม่มี chatId ให้สร้างแชทใหม่ก่อน
+      let currentChatId = localChatId;
+
       if (!currentChatId) {
         console.log("Creating new chat...");
         const createResponse = await fetch("/api/v1/chat/stream", {
@@ -289,97 +287,24 @@ export default function Chat() {
             title: userInput.substring(0, 30),
           }),
         });
-        
+
         if (!createResponse.ok) {
           throw new Error(`Failed to create chat: ${createResponse.status}`);
         }
-        
+
         const chatData = await createResponse.json();
         currentChatId = chatData.id || chatData._id;
-        
+
         console.log("New chat created with ID:", currentChatId);
-        
-        // อัปเดต URL แบบ client-side โดยไม่มีการรีเฟรชหน้า
+
         if (currentChatId) {
-          router.push(`/chat/${currentChatId}`, undefined, { shallow: true });
+          window.history.pushState({}, '', `/chat/${currentChatId}`);
+          setLocalChatId(currentChatId);
         } else {
           throw new Error("Failed to get chat ID from new chat");
         }
-<<<<<<< HEAD
-=======
-
-        if (isGenerating) {
-          console.log("Already generating response, ignoring new message");
-          return;
-        }
-
-        console.log("Created new chat with ID:", newChatId);
-
-        setMessages((prev) => [...prev, { text: userInput, isUser: true }]);
-        setInputLocked(true);
-        setIsGenerating(true);
-        setStartTime(Date.now());
-        setElapsedTime(null);
-
-        if (inputRef.current) inputRef.current.value = "";
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            text: `<span class="animate-dots">
-                  <span></span><span></span><span></span>
-                </span>`,
-            isUser: false,
-          },
-        ]);
-
-        // const response = await fetch("/api/v1/chat", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     message: userInput,
-        //     chatId: newChatId,
-        //     userId: session?.user?.id || "anonymous",
-        //   }),
-        // });
-
-        const response = await fetch("/api/v1/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: userInput,
-            chatId: chatId,
-            userId: session?.user?.id || "anonymous",
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        const botText = data.completion || "";
-
-        // เปลี่ยนเส้นทางไปยังแชทใหม่โดยไม่โหลดหน้าใหม่
-        // router.push(`/chat/${newChatId}`, { scroll: false });
-
-        typeBotResponse(botText);
-      } catch (error) {
-        console.error("Error handling message with new chat:", error);
-        setMessages((prev) => [
-          ...prev,
-          { text: "ไม่สามารถสร้างแชทใหม่หรือส่งข้อความได้", isUser: false },
-        ]);
-        setIsGenerating(false);
-        setInputLocked(false);
->>>>>>> 9fd4784242dd6e1692abfeef78492ae34b39d486
       }
-      
-      // ส่งข้อความ
+
       console.log(`Sending message to chat ID: ${currentChatId}`);
       const response = await fetch("/api/v1/chat", {
         method: "POST",
@@ -397,23 +322,21 @@ export default function Chat() {
           userId: session?.user?.id || "anonymous",
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-      
-      // รับข้อมูลการตอบกลับ
+
       const data = await response.json();
       console.log("Response received:", data);
-      
-      // อัปเดต UI ด้วยคำตอบ
+
       const botText = data.completion || "";
       typeBotResponse(botText);
-      
+
     } catch (error) {
       console.error("Error in sendMessage:", error);
       setMessages((prev) => [
-        ...prev.slice(0, -1), // ลบข้อความ loading
+        ...prev.slice(0, -1),
         { text: `เกิดข้อผิดพลาด: ${error.message}`, isUser: false },
       ]);
     } finally {
@@ -422,12 +345,12 @@ export default function Chat() {
     }
   };
 
-  
   const handleKeyPress = (event: React.KeyboardEvent) => {
     console.log("Key pressed:", event.key);
     if (event.key === "Enter" && !inputLocked) {
+      event.preventDefault();
       console.log("Enter pressed, sending message");
-      sendMessage();
+      sendMessage(event);
     }
   };
 
@@ -451,9 +374,10 @@ export default function Chat() {
     <div className="w-full h-[calc(100vh-125px)] flex flex-col">
       <div className="p-4 flex justify-between items-center">
         <Button
-          onClick={() => createNewChat(session, router, setIsLoading)}
+          onClick={createNewChat}
           variant="outline"
           className="flex items-center"
+          type="button"
         >
           <PlusCircle className="w-4 h-4 mr-2" />
           แชทใหม่
@@ -477,23 +401,14 @@ export default function Chat() {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`my-6 flex ${
-                  msg.isUser ? "justify-end" : "justify-start"
-                }`}
+                className={`my-6 flex ${msg.isUser ? "justify-end" : "justify-start"
+                  }`}
               >
                 <div
-<<<<<<< HEAD
                   className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${msg.isUser
                     ? "text-white bg-purple-900"
                     : "text-gray-800 bg-white"
                     }`}
-=======
-                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${
-                    msg.isUser
-                      ? "text-white bg-purple-900"
-                      : "text-gray-800 bg-white"
-                  }`}
->>>>>>> 9fd4784242dd6e1692abfeef78492ae34b39d486
                 >
                   {msg.isUser ? (
                     msg.text
@@ -526,81 +441,25 @@ export default function Chat() {
           </div>
         )}
 
-        <div className="w-full xl:w-2/3 relative flex items-center bg-white rounded-full px-4   bottom-4">
+        <div className="w-full xl:w-2/3 relative flex items-center bg-white rounded-full px-4 bottom-4">
           <Input
-            placeholder="จะทำอะไรให้ดี?"
+            placeholder="ต้องการให้ช่วยอะไร"
             ref={inputRef}
             disabled={inputLocked}
             onKeyDown={handleKeyPress}
             className="rounded-xl"
           />
           <Button
+            type="button"
             variant="default"
-            onClick={sendMessage}
+            onClick={(e) => sendMessage(e)}
             disabled={inputLocked}
             className="ml-2 px-3 py-2 rounded-xl"
           >
             <ArrowRight className="w-5 h-5" />
           </Button>
-          {/* <Input
-                        placeholder="ต้องการสอบถามอะไร?"
-                        ref={inputRef}
-                        disabled={inputLocked}
-                        onKeyDown={(e) => {
-                            console.log("Key down:", e.key);
-                            if (e.key === "Enter" && !inputLocked) {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        }}
-                        className="rounded-xl"
-                    />
-                    <Button
-                        variant="default"
-                        onClick={() => {
-                            console.log("Send button clicked");
-                            sendMessage();
-                        }}
-                        disabled={inputLocked}
-                        className="ml-2 px-3 py-2 rounded-xl"
-                    >
-                        <ArrowRight className="w-5 h-5" />
-                    </Button> */}
         </div>
       </div>
     </div>
   );
 }
-
-export const createNewChat = async (
-  session: any,
-  router: any,
-  setIsLoading: (v: boolean) => void
-) => {
-  // ตั้งค่า loading เป็น true
-  setIsLoading(true);
-  try {
-    const response = await fetch("/api/v1/chat/stream", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ownerId: session?.user?.id || "anonymous",
-        title: "New Chat",
-      }),
-    });
-
-    const data = await response.json();
-    console.log("Created chat:", data);
-    if (data.id || data._id) {
-      router.push(`/chat/${data.id || data._id}`);
-    } else {
-      console.error("No chat ID returned from API");
-    }
-  } catch (error) {
-    console.error("Error creating new chat:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
