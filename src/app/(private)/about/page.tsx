@@ -86,15 +86,15 @@ const AboutPage = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div  className="min-h-screen py-12 px-6 bg-background text-foreground">
-      <h1 className="text-3xl font-bold text-center mb-12">Team Contribution</h1>
+    <div  className="min-h-screen py-12 px-6 text-foreground ">
+      <h1 className="text-3xl font-bold text-center mb-12 text-[#5A0157]">Team Contribution</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {teamMembers.map((member, index) => (
           <Card
             key={`${member.name}-${index}`}
-            className="overflow-hidden shadow-lg transition-transform "
+            className="overflow-hidden shadow-lg transition-transform"
           >
-            <CardHeader className="flex items-center flex-col space-y-4 bg-gradient-to-b from-white to-gray-100 py-6">
+            <CardHeader className="flex items-center flex-col space-y-4 bg-gradient-to-b from-purple-50 to-white py-6">
               <Image
                 src={
                   typeof member.profileImage === "string"
@@ -102,8 +102,8 @@ const AboutPage = () => {
                     : member.profileImage.src
                 }
                 alt={member.name}
-                width={100}
-                height={100}
+                width={150}
+                height={150}
                 className="rounded-full object-cover shadow-lg"
               />
               <div className="text-center">
@@ -112,7 +112,7 @@ const AboutPage = () => {
               </div>
             </CardHeader>
   
-            <CardContent className="flex justify-center gap-6 text-muted-foreground ">
+            <CardContent className="flex justify-center gap-6 text-muted-foreground">
               <a
                 href={member.githubUrl}
                 target="_blank"
