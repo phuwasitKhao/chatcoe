@@ -1,7 +1,9 @@
-# 🤖 ChatCoE - Advanced AI Chat Platform
 
 <div align="center">
-  
+<div font-size="32px">
+  🤖 ChatCoE - RAG Chat Bot [AI] Chat Platform
+</div>
+
 ![ChatCoE Logo](https://img.shields.io/badge/ChatCoE-AI%20Chat%20Platform-blue?style=for-the-badge)
 
 </div>
