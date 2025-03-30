@@ -312,20 +312,17 @@ export default function Chat() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
-            {
-              role: "user",
-              content: userInput
-            }
-          ],
-          chatId: currentChatId,
+          message: userInput,
+          chatId: chatId,
           userId: session?.user?.id || "anonymous",
         }),
       });
 
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
+
 
       const data = await response.json();
       console.log("Response received:", data);
@@ -334,16 +331,17 @@ export default function Chat() {
       typeBotResponse(botText);
 
     } catch (error) {
-      console.error("Error in sendMessage:", error);
+      console.error("Error sending message:", error);
       setMessages((prev) => [
         ...prev.slice(0, -1),
         { text: `เกิดข้อผิดพลาด: ${error.message}`, isUser: false },
       ]);
-    } finally {
       setIsGenerating(false);
+    } finally {
       setInputLocked(false);
     }
   };
+
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     console.log("Key pressed:", event.key);
