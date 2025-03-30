@@ -16,7 +16,7 @@ import { MdTextSnippet } from "react-icons/md"; // For .txt files
 type PDFUploadInputProps = {
   label: string;
   file: FileProps | null;
-  setFile: any;
+  setFile: (file: FileProps | null) => void;
   className?: string;
   endpoint?: any;
 };
