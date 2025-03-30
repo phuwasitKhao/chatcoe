@@ -61,7 +61,7 @@ export function getFileIcon(extension: string | undefined) {
         <MdTextSnippet className="w-6 h-6 flex-shrink-0 mr-2 text-gray-500" />
       );
     default:
-      return <FaFileAlt className="w-6 h-6 flex-shrink-0 mr-2 text-gray-500" />; // Default icon for other file types
+      return <FaFileAlt className="w-6 h-6 flex-shrink-0 mr-2 text-gray-500" />;
   }
 }
 export default function PDFFileUpload({

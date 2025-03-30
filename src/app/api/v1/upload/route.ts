@@ -101,7 +101,6 @@ export async function POST(req: NextRequest) {
             const bytes = await file.arrayBuffer();
             const imageBuffer = Buffer.from(bytes);
 
-            // OCR ด้วย Tesseract (รองรับภาษาไทยและอังกฤษ)
             const worker = await createWorker('tha+eng');
             const { data } = await worker.recognize(imageBuffer);
             await worker.terminate();
