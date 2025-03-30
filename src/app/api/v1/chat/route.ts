@@ -167,6 +167,10 @@ export async function POST(req: NextRequest) {
     const client = await getPineconeClient();
     const vectorStore = await getVectorStore(client);
 
+    // ดึงประวัติการสนทนา
+    // เช่น จาก DB หรือ localStorage
+    const chatHistory = await fetchChatHistory(chatId);
+
     // ใช้ RAG เพื่อสร้างคำตอบ
     const answer = await processUserMessage({
       userPrompt: currentMessage,
@@ -175,7 +179,8 @@ export async function POST(req: NextRequest) {
       model,
     });
 
-    // แปลง stream เป็น string
+    // บันทึกข้อความลง database
+    await saveMessage(chatId, userId, message, "user");
     let answerString = "";
     for await (const chunk of answer) {
       answerString += chunk;
@@ -192,6 +197,9 @@ export async function POST(req: NextRequest) {
     });
     await botMessage.save();
 
+    return NextResponse.json({
+      completion: answer,
+      status: "success",
     // ส่งคำตอบกลับ
     return NextResponse.json({
       completion: answerString,
@@ -207,6 +215,55 @@ export async function POST(req: NextRequest) {
       },
       { status: 500 }
     );
+  }
+}
+
+// ฟังก์ชันสำหรับดึงประวัติการสนทนา
+async function fetchChatHistory(chatId: string) {
+  // ดึงประวัติการสนทนาจาก DB
+  // ตัวอย่างเช่น:
+  try {
+    const response = await fetch(`/api/v1/chat/messages?chatId=${chatId}`);
+    const data = await response.json();
+
+    if (data.messages && data.messages.length > 0) {
+      return data.messages
+        .map(
+          (msg: any) =>
+            `${msg.senderId === "bot" ? "assistant" : "user"}: ${msg.content}`
+        )
+        .join("\n");
+    }
+    return "";
+  } catch (error) {
+    console.error("Error fetching chat history:", error);
+    return "";
+  }
+}
+
+// ฟังก์ชันสำหรับบันทึกข้อความ
+async function saveMessage(
+  chatId: string,
+  senderId: string,
+  content: string,
+  role: string
+) {
+  // บันทึกข้อความลง DB
+  try {
+    await fetch("/api/v1/chat/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chatId,
+        senderId,
+        content,
+        role,
+      }),
+    });
+  } catch (error) {
+    console.error("Error saving message:", error);
   }
 }
 
