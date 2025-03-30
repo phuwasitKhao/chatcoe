@@ -30,7 +30,7 @@ export default function PageWithMainControlLayout({
     <SidebarProvider>
       <AppSidebar />
       <main className="w-full h-fit z-50">
-        <div className="sticky top-0 w-full pl-4 border-b py-3 flex items-center mx-auto  ">
+        <div className="sticky top-0 w-full pl-4 border-b py-3 flex items-center mx-auto bg-white">
           <SidebarTrigger className="justify-center" />
           <div className="flex justify-center items-center w-full">
             {/* <Image
