@@ -417,7 +417,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="w-full h-[calc(100vh-125px)] flex flex-col">
       <div className="p-4 flex justify-between items-center">
         <Button
           onClick={createNewChat}
@@ -429,7 +429,7 @@ export default function Chat() {
         </Button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center overflow-hidden pb-20">
+      <div className="flex-1 flex flex-col items-center overflow-hidden ">
         {messages.length === 0 && (
           <div className="flex-1 flex flex-col justify-center items-center">
             <h1 className="text-2xl sm:text-xl font-semibold mt-8">
