@@ -294,6 +294,19 @@ export default function Chat() {
           },
         ]);
 
+        // const response = await fetch("/api/v1/chat", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({
+        //     message: userInput,
+        //     chatId: newChatId,
+        //     userId: session?.user?.id || "anonymous",
+        //   }),
+        // });
+
+
         const response = await fetch("/api/v1/chat", {
           method: "POST",
           headers: {
@@ -301,7 +314,7 @@ export default function Chat() {
           },
           body: JSON.stringify({
             message: userInput,
-            chatId: newChatId,
+            chatId: chatId,
             userId: session?.user?.id || "anonymous",
           }),
         });
@@ -433,16 +446,14 @@ export default function Chat() {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`my-6 flex ${
-                  msg.isUser ? "justify-end" : "justify-start"
-                }`}
+                className={`my-6 flex ${msg.isUser ? "justify-end" : "justify-start"
+                  }`}
               >
                 <div
-                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${
-                    msg.isUser
+                  className={`px-4 py-2 rounded-xl text-sm break-words max-w-[70%] ${msg.isUser
                       ? "text-white bg-purple-900"
                       : "text-gray-800 bg-white"
-                  }`}
+                    }`}
                 >
                   {msg.isUser ? (
                     msg.text

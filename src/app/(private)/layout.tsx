@@ -12,8 +12,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { AppSidebar } from "@/components/share/layout/sidebar/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
-
+// import Image from "next/image";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "../api/uploadthing/core";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 export default function PageWithMainControlLayout({
   children,
 }: {
@@ -47,6 +49,9 @@ export default function PageWithMainControlLayout({
             <AvatarFallback className="rounded-lg">CN</AvatarFallback>
           </Avatar>
         </div>
+        <NextSSRPlugin
+          routerConfig={extractRouterConfig(ourFileRouter)}
+        />
         {children}
       </main>
     </SidebarProvider>
