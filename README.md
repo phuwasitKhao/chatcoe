@@ -4,8 +4,6 @@
   
 ![ChatCoE Logo](https://img.shields.io/badge/ChatCoE-AI%20Chat%20Platform-blue?style=for-the-badge)
 
-**[chatcoe.ai](https://chatcoe.ai) | [Documentation](https://chatcoe.ai/docs) | [Live Demo](https://chatcoe.ai/demo)**
-
 </div>
 
 ## 📝 Overview
@@ -33,7 +31,7 @@
 ### Usage Guide
 
 1. **Launch ChatCoE**:
-   - Visit [chatcoe.ai](https://chatcoe.ai) in your web browser
+   - Visit [ChatCOE](https://chatcoe-iota.vercel.app) in your web browser
    - Sign in to your account (if applicable)
 
 2. **Start a New Conversation**:
@@ -66,7 +64,7 @@
 ChatCoE's file upload feature allows your AI assistant to learn from and analyze various types of documents:
 
 ### Supported File Types
-- **Documents**: PDF, DOCX,
+- **Documents**: PDF, DOCX
 - 
 ### Use Cases
 - **Document Analysis**: Upload contracts, reports, or articles for summarization and insights
@@ -96,7 +94,7 @@ If you encounter any issues while using ChatCoE:
    - Restart your browser and try again
 
 5. **Contact Support**:
-   - Visit our [Help Center](https://chatcoe.ai/help) for additional assistance
+   - Visit our [[Help Center](https://chatcoe-iota.vercel.app/help)] for additional assistance
    - Reach out to our support team at support@chatcoe.ai if problems persist
 
 ## 👨‍💻 Development Team
@@ -116,6 +114,6 @@ ChatCoE was developed by a talented team of contributors from the Computer Engin
 
 <div align="center">
   <p>© 2025 ChatCoE Team. All Rights Reserved.</p>
-  <p><a href="https://chatcoe.ai">chatcoe.ai</a> | <a href="mailto:contact@chatcoe.ai">contact@chatcoe.ai</a></p>
+  <p><a href="https://chatcoe-iota.vercel.app/help">ChatCOE</a></p>
   <p>Made with ❤️ at Computer Engineering</p>
 </div>
