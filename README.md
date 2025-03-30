@@ -1,5 +1,5 @@
 
-## 🤖 ChatCoE - RAG Chat Bot [AI] Chat Platform
+## 🤖 ChatCoE - RAG Chat Bot [AI]
 <div align="center">
 
 ![ChatCoE Logo](https://img.shields.io/badge/ChatCoE-AI%20Chat%20Platform-blue?style=for-the-badge)
